@@ -7,7 +7,7 @@ type Props ={
     drawGantts(context:CanvasRenderingContext2D):void,
 }
 function GanttChart(props:Props){
-
+ 
     const canvasRef = React.useRef(null)
     const draw = props.drawGantts
 
