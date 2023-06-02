@@ -5,38 +5,30 @@ import viteLogo from '/vite.svg'
 import GanttChart from '../carloGantt.ts/GanttChart'
 import drawGanttGrid from '../carloGantt.ts/drawGanttGrid'
 
+
+import { gantSettings } from '../carloGantt.ts/types/generalTypes'
+
 const body = document.body
 
 const ganttChartWidth = body.clientWidth
 const gantChartHeight = 500
 
 
-
-const draw = (context:CanvasRenderingContext2D )=>{
-
-
-  const gridSettings = {
-    context:context,
+const gantSetting:gantSettings = {
     gantHeight:gantChartHeight,
     gantWidth:ganttChartWidth,
     nCols:10,
     nRows:5,
+    rowHeight:20
   }
-
-  drawGanttGrid(gridSettings)
-
-
-
-}
-
 
 
 function App() {
   const [count, setCount] = useState(0)
   
   return (
-    <GanttChart height={gantChartHeight} width={ganttChartWidth} drawGantts={draw}></GanttChart>
+    <GanttChart height={gantChartHeight} width={ganttChartWidth} gantSettings={gantSetting}></GanttChart>
   )
 }
 
-export default App
+export {App}
