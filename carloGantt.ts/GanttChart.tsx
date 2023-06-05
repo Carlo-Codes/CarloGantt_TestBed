@@ -11,11 +11,21 @@ function GanttChart(props:Props){
     const canvasRef = React.useRef(null)
     const gantData = React.useRef(null)
     const frameID = React.useRef(0)
+
+    const view = [1, 0, 0, 1, 0, 0]
+
+
+
+
     let ctx : CanvasRenderingContext2D | null
     if(canvasRef.current){
         const canvas : HTMLCanvasElement = canvasRef.current
          ctx = canvas.getContext("2d")
     } 
+
+    const applyView = (view:Array<number>) =>{
+        ctx?.setTransform(view[0],view[1],view[2],view[3],view[4],view[5])
+    }
    
 
     let mouseDown = false
@@ -42,12 +52,20 @@ function GanttChart(props:Props){
         const new_mY = e.clientY
         const dx = new_mX - mX
         const dy = new_mY - mY
+
+
         if(ctx){
+            
             ctx.save()
             ctx.setTransform(1, 0, 0, 1, 0, 0)
             ctx.clearRect(0,0,props.renderSet.canvasWidth , props.renderSet.canvasHeight)
             ctx.restore()
-            ctx.translate(dx,dy)
+            view[4] += dx
+            view[5] += dy
+            if(view[5] < 0){
+                view[5] = 0
+            }
+            applyView(view)
             
         }
        
@@ -64,6 +82,7 @@ function GanttChart(props:Props){
                 renderSettings:props.renderSet
             }
             drawGanttGrid(gridInputs)
+            
         }
  
     }
