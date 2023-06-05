@@ -6,7 +6,7 @@ import GanttChart from '../carloGantt.ts/GanttChart'
 import drawGanttGrid from '../carloGantt.ts/drawGanttGrid'
 
 
-import { gantSettings } from '../carloGantt.ts/types/generalTypes'
+import { renderSettings } from '../carloGantt.ts/types/generalTypes'
 
 const body = document.body
 
@@ -14,9 +14,9 @@ const ganttChartWidth = body.clientWidth
 const gantChartHeight = 500
 
 
-const gantSetting:gantSettings = {
-    gantHeight:gantChartHeight,
-    gantWidth:ganttChartWidth,
+const Settings:renderSettings = {
+    canvasHeight:gantChartHeight,
+    canvasWidth:ganttChartWidth,
     nCols:10,
     nRows:5,
     rowHeight:20
@@ -27,7 +27,7 @@ function App() {
   const [count, setCount] = useState(0)
   
   return (
-    <GanttChart height={gantChartHeight} width={ganttChartWidth} gantSettings={gantSetting}></GanttChart>
+    <GanttChart renderSet={Settings}></GanttChart>
   )
 }
 

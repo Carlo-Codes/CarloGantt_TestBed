@@ -1,24 +1,22 @@
+import { renderSettings } from "./types/generalTypes"
 
 
 type inputs = {
     context:CanvasRenderingContext2D | null
-    gantHeight:number,
-    gantWidth:number,
-    nCols:number,
-    nRows:number,
-    rowHeight:number
+    renderSettings:renderSettings
 
 }
 function drawGanttGrid(inputs:inputs){
-    const cellwidth = inputs.gantWidth/inputs.nCols
-    const cellheight = inputs.rowHeight
-    const nCells = inputs.nRows * inputs.nCols
+    
+    const cellwidth = inputs.renderSettings.canvasWidth / inputs.renderSettings.nCols
+    const cellheight = inputs.renderSettings.rowHeight
+    const nCells = inputs.renderSettings.nCols * inputs.renderSettings.nRows
     let drawingRow = 0
     let drawingCol = 0
     if(!inputs.context) throw new Error("drawGanttGrid has no context")
     for (let i = 0; i < nCells; i++){
         
-        if (i % inputs.nCols === 0){
+        if (i % inputs.renderSettings.nCols === 0){
             drawingRow++
             drawingCol = 0
         }

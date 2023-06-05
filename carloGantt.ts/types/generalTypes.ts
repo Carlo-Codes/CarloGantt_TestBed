@@ -1,9 +1,9 @@
-type gantSettings = {
-    gantHeight:number,
-    gantWidth:number,
+type renderSettings = {
+    canvasHeight:number,
+    canvasWidth:number,
     nCols:number,
     nRows:number,
     rowHeight:number
 }
 
-export type {gantSettings}
+export type {renderSettings}
