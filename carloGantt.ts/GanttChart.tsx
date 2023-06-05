@@ -47,7 +47,6 @@ function GanttChart(props:Props){
             ctx.setTransform(1, 0, 0, 1, 0, 0)
             ctx.clearRect(0,0,props.renderSet.canvasWidth , props.renderSet.canvasHeight)
             ctx.restore()
-            
             ctx.translate(dx,dy)
             
         }
@@ -77,6 +76,10 @@ function GanttChart(props:Props){
 
     useEffect(()=>{
         frameID.current = requestAnimationFrame(nextFrame)
+        if(canvasRef.current){
+            const canvas : HTMLCanvasElement = canvasRef.current
+             ctx = canvas.getContext("2d")
+        } 
         return () => {
             cancelAnimationFrame(frameID.current)
         }
