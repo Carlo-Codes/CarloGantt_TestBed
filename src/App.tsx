@@ -18,7 +18,7 @@ const Settings:renderSettings = {
     canvasHeight:gantChartHeight,
     canvasWidth:ganttChartWidth,
     nCols:10,
-    nRows:5,
+    nRows:100,
     rowHeight:20
   }
 

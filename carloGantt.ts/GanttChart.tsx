@@ -1,4 +1,4 @@
-import React, {FunctionComponent, MouseEventHandler, useEffect} from 'react'
+import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
 import { renderSettings } from './types/generalTypes'
 import drawGanttGrid from './drawGanttGrid'
@@ -6,16 +6,18 @@ import drawGanttGrid from './drawGanttGrid'
 type Props ={
     renderSet:renderSettings
 }
+
 function GanttChart(props:Props){
  
     const canvasRef = React.useRef(null)
     const gantData = React.useRef(null)
     const frameID = React.useRef(0)
+    
 
-    const view = [1, 0, 0, 1, 0, 0]
+    const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
+    let previousView:DOMMatrix; // this might not work
 
-
-
+   
 
     let ctx : CanvasRenderingContext2D | null
     if(canvasRef.current){
@@ -23,14 +25,39 @@ function GanttChart(props:Props){
          ctx = canvas.getContext("2d")
     } 
 
-    const applyView = (view:Array<number>) =>{
-        ctx?.setTransform(view[0],view[1],view[2],view[3],view[4],view[5])
-    }
-   
 
     let mouseDown = false
     let mX:number
     let mY:number
+
+    const clearCanvas = (ctx : CanvasRenderingContext2D) => {
+        ctx.save()
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        ctx.clearRect(0,0,props.renderSet.canvasWidth, props.renderSet.canvasHeight)
+        ctx.restore()
+    }
+
+    const limitTransfrom = (view:DOMMatrix) => { //limits views every applyview() call
+        
+        // const lowestViewPosition = props.renderSet.canvasHeight - (props.renderSet.nRows * props.renderSet.rowHeight)
+           
+        // if(view.f >= lowestViewPosition){ 
+        //     view.f = lowestViewPosition
+        // }
+
+        if(view.a < 1 || view.d < 1){
+            view.a = 1
+            view.d = 1
+            view.e = previousView.e
+            view.f = previousView.f
+        }
+    }
+
+    const applyView = (view:DOMMatrix) =>{
+        limitTransfrom(view)
+        ctx?.setTransform(view)
+    }
+
 
     const handleMouseDown:MouseEventHandler = (e) => {
         e.preventDefault();
@@ -39,11 +66,13 @@ function GanttChart(props:Props){
         mX = e.clientX
         mY = e.clientY
     }
+
     const handleMouseUp:MouseEventHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
         mouseDown = false
     }
+
     const handleMouseMove:MouseEventHandler = (e) => {
         if(!mouseDown) return 
         e.preventDefault();
@@ -52,26 +81,46 @@ function GanttChart(props:Props){
         const new_mY = e.clientY
         const dx = new_mX - mX
         const dy = new_mY - mY
-
-
+        previousView = view
         if(ctx){
-            
-            ctx.save()
-            ctx.setTransform(1, 0, 0, 1, 0, 0)
-            ctx.clearRect(0,0,props.renderSet.canvasWidth , props.renderSet.canvasHeight)
-            ctx.restore()
-            view[4] += dx
-            view[5] += dy
-            if(view[5] < 0){
-                view[5] = 0
-            }
+            clearCanvas(ctx)
+            view.e += dx
+            view.f += dy
+
             applyView(view)
-            
+            console.log(view)
         }
-       
         mY = new_mY
         mX = new_mX
     }   
+
+    const handleMouseWheel:WheelEventHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        previousView = view
+
+        const newScale = view.a + (e.deltaY * 0.0001 )
+        const oldScale = view.a
+
+        const scaleDelta = newScale - oldScale
+
+        const offsetX = -(scaleDelta * e.clientX )
+        const offsetY = -(scaleDelta * e.clientY )
+
+        console.log(e.clientX)
+        console.log(offsetX)
+
+        if(ctx){
+            clearCanvas(ctx)
+            view.a = newScale
+            view.d = newScale 
+            view.e += offsetX
+            view.f += offsetY
+            //console.log(view)
+            applyView(view)
+
+        }
+    }
 
 
 
@@ -84,7 +133,6 @@ function GanttChart(props:Props){
             drawGanttGrid(gridInputs)
             
         }
- 
     }
 
    const nextFrame = () =>{
@@ -93,7 +141,7 @@ function GanttChart(props:Props){
         frameID.current = requestAnimationFrame(nextFrame)
    }
 
-    useEffect(()=>{
+    useEffect(()=>{ 
         frameID.current = requestAnimationFrame(nextFrame)
         if(canvasRef.current){
             const canvas : HTMLCanvasElement = canvasRef.current
@@ -107,7 +155,7 @@ function GanttChart(props:Props){
 
     return(
         <div>
-            <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} width={props.renderSet.canvasWidth} height={props.renderSet.canvasWidth} ref={canvasRef}/>
+            <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onWheel={handleMouseWheel} width={props.renderSet.canvasWidth} height={props.renderSet.canvasHeight} ref={canvasRef}/>
         </div>
     )
 }
