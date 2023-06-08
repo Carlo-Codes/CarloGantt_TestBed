@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 //import './App.css'
 import GanttChart from '../carloGantt.ts/GanttChart'
-import drawGanttGrid from '../carloGantt.ts/GanttGrid'
+import drawGanttGrid from '../carloGantt.ts/pixiJS/GanttGrid'
 
 
 import { renderSettings } from '../carloGantt.ts/types/generalTypes'

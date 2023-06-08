@@ -1,4 +1,4 @@
-import { renderSettings } from "./types/generalTypes"
+import { renderSettings } from "../types/generalTypes"
 import { Graphics } from "pixijs"
 
 

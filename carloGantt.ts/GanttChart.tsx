@@ -1,8 +1,9 @@
 import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
 import { renderSettings } from './types/generalTypes'
-import GanttGrid from './GanttGrid'
+import GanttGrid from './pixiJS/GanttGrid'
 import { Application } from 'pixijs'
+import {Viewport} from './pixiJS/viewport'
 
 type Props ={
     renderSet:renderSettings
@@ -15,6 +16,11 @@ function GanttChart(props:Props){
     const frameID = React.useRef(0)
 
     const pixiRef = React.useRef(null)
+
+    let mouseDown = false
+    let mX:number
+    let mY:number
+
     
     const app = new Application<HTMLCanvasElement>({
         width:props.renderSet.canvasWidth,
@@ -26,18 +32,16 @@ function GanttChart(props:Props){
         renderSettings:props.renderSet
     }
 
+    const viewport = new Viewport()
+
     const grid = new GanttGrid(gridInputs)
     grid.draw()
 
+    viewport.addGraphics(grid)
+    viewport.setLimits(-200)
+
     const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
     
-
-
-    let mouseDown = false
-    let mX:number
-    let mY:number
-
-
 
     const limitTransfrom = (view:DOMMatrix) => { //limits views every applyview() call
         
@@ -50,21 +54,21 @@ function GanttChart(props:Props){
     }
 
 
-    const handleMouseDown:MouseEventHandler = (e) => {
+    const handleMouseDown = (e:MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         mouseDown = true
         mX = e.clientX
-        mY = e.clientY
+        mY = e.clientY 
     }
 
-    const handleMouseUp:MouseEventHandler = (e) => {
+    const handleMouseUp = (e:MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         mouseDown = false
     }
 
-    const handleMouseMove:MouseEventHandler = (e) => {
+    const handleMouseMove = (e:MouseEvent) => {
         if(!mouseDown) return 
         e.preventDefault();
         e.stopPropagation();
@@ -73,57 +77,43 @@ function GanttChart(props:Props){
         const dx = new_mX - mX
         const dy = new_mY - mY
         
-        
-            view.e += dx
-            view.f += dy
-
-            applyView(view)
-            console.log(view)
+        viewport.pan(dx,dy)
         
         mY = new_mY
         mX = new_mX
     }   
 
-    const handleMouseWheel:WheelEventHandler = (e) => {
+    const handleMouseWheel = (e:WheelEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
+        const factor = 1 + (e.deltaY * 0.001)
 
-        const newScale = view.a + (e.deltaY * 0.0001 )
-        const oldScale = view.a
-
-        const scaleDelta = newScale - oldScale
-
-        const offsetX = -(scaleDelta * e.clientX )
-        const offsetY = -(scaleDelta * e.clientY )
-
-        console.log(e.clientX)
-        console.log(offsetX)
-
-        applyView(view)
-
-        }
+        console.log(factor)
+        viewport.zoom(factor,e.clientX, e.clientY)
+    }
 
     const draw = ()=>{
         
-            
-            
-            app.stage.addChild(grid)
+            app.stage.addChild(viewport)
             
         }
-
-
 
     useEffect(()=>{ 
         if(pixiRef.current){
             const pixiElemet:HTMLDivElement = pixiRef.current
             pixiElemet.appendChild(app.view)
+            pixiElemet.addEventListener("mouseout",handleMouseUp)
+            pixiElemet.addEventListener("mouseup", handleMouseUp)
+            pixiElemet.addEventListener("mousedown", handleMouseDown)
+            pixiElemet.addEventListener("mousemove", handleMouseMove)
+            pixiElemet.addEventListener("wheel", handleMouseWheel)
             draw()
             app.start()
             
         } 
         return () => {
-            app.stop()
+            app.stop() 
+            //app.destroy()
         }
     },[])
 
