@@ -4,6 +4,7 @@ import { renderSettings } from './types/generalTypes'
 import GanttGrid from './pixiJS/GanttGrid'
 import { Application } from 'pixijs'
 import {Viewport} from './pixiJS/viewport'
+import{GantTime} from './dateTime/gantTime'
 
 type Props ={
     renderSet:renderSettings
@@ -32,26 +33,27 @@ function GanttChart(props:Props){
         renderSettings:props.renderSet
     }
 
+
     const viewport = new Viewport()
 
     const grid = new GanttGrid(gridInputs)
     grid.draw()
 
+    const time = new GantTime({
+        divisions: "d",
+        bufferSize: 365
+    })
+
+    const columns = time.getDivisions()
+
+    console.log(columns) // back here next, remove manual option for nCols in settings, replace with buffer size, implement column headers
+
     viewport.addGraphics(grid)
-    viewport.setLimits(-200)
+    
 
     const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
     
 
-    const limitTransfrom = (view:DOMMatrix) => { //limits views every applyview() call
-        
-        // const lowestViewPosition = props.renderSet.canvasHeight - (props.renderSet.nRows * props.renderSet.rowHeight)
-  
-    }
-
-    const applyView = (view:DOMMatrix) =>{
-        null
-    }
 
 
     const handleMouseDown = (e:MouseEvent) => {

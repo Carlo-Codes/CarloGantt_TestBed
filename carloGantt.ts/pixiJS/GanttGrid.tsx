@@ -36,7 +36,7 @@ class GanttGrid extends Graphics{
             }
             const xPos = cellwidth*drawingCol
             const yPos = cellheight*drawingRow
-            this.lineStyle(1, 0x00FF00);
+            this.lineStyle(2, 0x00FF00);
             this.drawRect(xPos, yPos,cellwidth,cellheight)
             drawingCol++
         }

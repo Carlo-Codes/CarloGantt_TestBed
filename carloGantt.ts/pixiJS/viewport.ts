@@ -13,7 +13,6 @@ export class Viewport extends Container{
         this.minY = null
         this.maxX = null
         this.minX = null
-        
 
     }
 
