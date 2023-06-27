@@ -8,6 +8,10 @@ import drawGanttGrid from '../carloGantt.ts/pixiJS/GanttGrid'
 
 import { renderSettings } from '../carloGantt.ts/types/generalTypes'
 
+/* 
+this is the test bed for the library
+*/
+
 const body = document.body
 
 const ganttChartWidth = body.clientWidth
@@ -17,9 +21,13 @@ const gantChartHeight = 500
 const Settings:renderSettings = {
     canvasHeight:gantChartHeight,
     canvasWidth:ganttChartWidth,
-    nCols:10,
+    timeBuffer:365,
+    timeUnit:"d",
     nRows:100,
-    rowHeight:20
+    rowHeight:20,
+    backgroundColour:0x5BBA6F,
+    gridLineColour:0x00FF00
+    
   }
 
 
@@ -27,7 +35,7 @@ function App() {
   const [count, setCount] = useState(0)
   
   return (
-    <GanttChart renderSet={Settings}></GanttChart>
+    <GanttChart renderSettings={Settings}></GanttChart>
   )
 }
 

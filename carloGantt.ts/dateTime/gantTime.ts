@@ -1,21 +1,25 @@
-import * as dayjs from "dayjs"
+/* 
+This Class generates the time divisions for the gantt chart
 
-type gantTimeSettings = {
-    divisions:"h"|"m"|"d"|"w" //hour minutes days weeks
-    bufferSize : number
-}
+*/
+
+import * as dayjs from "dayjs"
+import { renderSettings } from "../types/generalTypes"
 
 
 export class GantTime{
+
     private timeDivisions : [dayjs.Dayjs]
-    constructor(settings:gantTimeSettings){
+
+    constructor(settings:renderSettings){
         const now = dayjs()
         this.timeDivisions = [now]
-        for(let i = settings.bufferSize; i > 0; i--){
-            this.timeDivisions.push(now.subtract(i,settings.divisions))
+
+        for(let i = settings.timeBuffer; i > 0; i--){
+            this.timeDivisions.push(now.subtract(i,settings.timeUnit))
         }
-        for(let i = 0; i < settings.bufferSize; i++){
-            this.timeDivisions.push(now.add(i,settings.divisions))
+        for(let i = 0; i < settings.timeBuffer; i++){
+            this.timeDivisions.push(now.add(i,settings.timeUnit))
         }
     }
 

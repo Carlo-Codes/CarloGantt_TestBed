@@ -6,8 +6,13 @@ import { Application } from 'pixijs'
 import {Viewport} from './pixiJS/viewport'
 import{GantTime} from './dateTime/gantTime'
 
+/* 
+this is a react function for creating the gant chart object. it includes the viewport, the grid, the headings etc and brings it all together
+Also, it handles all the events from the mouse.
+*/
+
 type Props ={
-    renderSet:renderSettings
+    renderSettings:renderSettings
 }
 
 function GanttChart(props:Props){
@@ -24,25 +29,18 @@ function GanttChart(props:Props){
 
     
     const app = new Application<HTMLCanvasElement>({
-        width:props.renderSet.canvasWidth,
-        height:props.renderSet.canvasHeight,
-        backgroundColor: 0x5BBA6F,
+        width:props.renderSettings.canvasWidth,
+        height:props.renderSettings.canvasHeight,
+        backgroundColor: props.renderSettings.backgroundColour,
     })
 
-    const gridInputs = {
-        renderSettings:props.renderSet
-    }
-
-
+    const time = new GantTime(props.renderSettings)
     const viewport = new Viewport()
+    const grid = new GanttGrid(props.renderSettings)
 
-    const grid = new GanttGrid(gridInputs)
     grid.draw()
 
-    const time = new GantTime({
-        divisions: "d",
-        bufferSize: 365
-    })
+
 
     const columns = time.getDivisions()
 
@@ -115,7 +113,7 @@ function GanttChart(props:Props){
         } 
         return () => {
             app.stop() 
-            //app.destroy()
+            
         }
     },[])
 
