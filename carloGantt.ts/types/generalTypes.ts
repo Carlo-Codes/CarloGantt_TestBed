@@ -7,6 +7,8 @@ type renderSettings = {
     rowHeight:number,
     backgroundColour:number,
     gridLineColour: number,
+    maxScale: number,
+    minScale : number,
 }
 
 export type {renderSettings}

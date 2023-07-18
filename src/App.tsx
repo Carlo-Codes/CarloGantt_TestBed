@@ -26,7 +26,9 @@ const Settings:renderSettings = {
     nRows:100,
     rowHeight:20,
     backgroundColour:0x5BBA6F,
-    gridLineColour:0x00FF00
+    gridLineColour:0x00FF00,
+    maxScale:5,
+    minScale:1,
     
   }
 

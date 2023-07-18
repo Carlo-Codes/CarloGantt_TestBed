@@ -38,9 +38,9 @@ function GanttChart(props:Props){
     const viewport = new Viewport()
     const grid = new GanttGrid(props.renderSettings)
 
+    viewport.setLimits({maxScale:5,minScale:1})
+
     grid.draw()
-
-
 
     const columns = time.getDivisions()
 
@@ -48,7 +48,6 @@ function GanttChart(props:Props){
 
     viewport.addGraphics(grid)
     
-
     const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
     
 
@@ -86,7 +85,7 @@ function GanttChart(props:Props){
     const handleMouseWheel = (e:WheelEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        const factor = 1 + (e.deltaY * 0.001)
+        const factor = 1 + (-e.deltaY * 0.001)
 
         console.log(factor)
         viewport.zoom(factor,e.clientX, e.clientY)

@@ -1,33 +1,47 @@
 import { Container, Graphics, Matrix } from "pixijs";
+import {viewPortLimits} from "../types/pixiJsTypes"
+
 
 export class Viewport extends Container{
     private viewMatrix : Matrix
-    private maxY : number | null
-    private minY : number | null
-    private maxX : number | null
-    private minX : number | null
+    private limits : viewPortLimits | null
     constructor(matrix:Matrix = new Matrix(1, 0, 0, 1, 0, 0)){
         super()
         this.viewMatrix = matrix
-        this.maxY = 0
-        this.minY = null
-        this.maxX = null
-        this.minX = null
+        this.limits = {
+            minX:null,
+            minY:null, 
+            maxX:null,
+            maxY:0, 
+            minScale:null,
+            maxScale:null,
+        }
+
 
     }
 
     zoom(factor:number, X:number, Y:number){
+        if(this.limits){
+            if((this.limits.minScale || this.limits.minScale === 0) && (this.viewMatrix.a * factor < this.limits.minScale)){
+                this.viewMatrix.a = this.limits.minScale
+                this.viewMatrix.d = this.limits.minScale
+                
+            }
+            else if((this.limits.maxScale || this.limits.maxScale === 0) && (this.viewMatrix.a * factor > this.limits.maxScale)){
+                this.viewMatrix.a = this.limits.maxScale
+                this.viewMatrix.d = this.limits.maxScale
+                
 
-         
-        
-        console.log(this.viewMatrix)
-        
-        this.viewMatrix.translate(-X, -Y)
-        this.viewMatrix.scale(factor,factor)
-        this.viewMatrix.translate(X, Y)
-        this.limitTranform()
-        this.transform.setFromMatrix(this.viewMatrix)
-      
+            }else{
+                console.log(this.viewMatrix) 
+                this.viewMatrix.translate(-X, -Y)
+                this.viewMatrix.scale(factor, factor)
+                this.viewMatrix.translate(X, Y)
+                this.limitTranform()
+                console.log(this.viewMatrix)
+                this.transform.setFromMatrix(this.viewMatrix)
+            }
+        }
     }
 
     pan(xAmount:number, yAmount:number){
@@ -42,28 +56,36 @@ export class Viewport extends Container{
         this.addChild(graphics)
     }
 
-    setLimits(minX:number|null = null, minY:number|null = null, maxX:number|null = null, maxY:number|null = 0){
-        this.minX = minX
-        this.minY = minY
-        this.maxX = maxX
-        this.maxY = maxY
-        this.limitTranform()
+    setLimits(newLimits:viewPortLimits){
+        if ((newLimits.minScale && newLimits.maxScale)&&(newLimits.minScale > newLimits.maxScale)){
+            throw new Error("Minimum viewport scale cannot be higher than max viewport scale")
+        } 
+        if (this.limits){
+            for (const key  in newLimits){
+                this.limits[key as keyof viewPortLimits] = newLimits[key as keyof viewPortLimits]
+            }
+        }
+        
+    
+
+
     }
 
     private limitTranform(){
-        if ((this.maxY || this.maxY === 0) && (this.viewMatrix.ty > this.maxY)){
-            this.viewMatrix.ty =  this.maxY
-        }
-        if ((this.minY || this.minY === 0) && (this.viewMatrix.ty < this.minY)){
-            
-            this.viewMatrix.ty =  this.minY
-        }
-        if ((this.maxX || this.maxX === 0 ) && (this.viewMatrix.tx > this.maxX)){
-            this.viewMatrix.tx =  this.maxX
-        }
-        if ((this.minX || this.minX === 0) && (this.viewMatrix.tx < this.minX)){
-            console.log(this.viewMatrix.tx + "<" + this.minX)
-            this.viewMatrix.tx =  this.minX
+        if(this.limits){
+            console.log(this.limits)
+            if ((this.limits.maxY || this.limits.maxY === 0) && (this.viewMatrix.ty > this.limits.maxY)){
+                this.viewMatrix.ty =  this.limits.maxY
+            }
+            else if ((this.limits.minY || this.limits.minY === 0) && (this.viewMatrix.ty < this.limits.minY)){
+                this.viewMatrix.ty =  this.limits.minY
+            }
+            else if ((this.limits.maxX || this.limits.maxX === 0 ) && (this.viewMatrix.tx > this.limits.maxX)){
+                this.viewMatrix.tx =  this.limits.maxX
+            }
+            else if ((this.limits.minX || this.limits.minX === 0) && (this.viewMatrix.tx < this.limits.minX)){
+                this.viewMatrix.tx =  this.limits.minX
+            }
         }
         
     }

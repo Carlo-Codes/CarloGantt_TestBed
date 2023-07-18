@@ -22,14 +22,14 @@ class GanttGrid extends Graphics{
     }
 
     draw(){
-        const cellwidth = this.canvasWidth / this.nCols
+        const cellwidth = 100//this.canvasWidth / this.nCols
         const cellheight = this.rowHeight
         const nCells = this.nCols * this.nRows
         let drawingRow = 0
         let drawingCol = 0
         for (let i = 0; i < nCells; i++){
             
-            if (i % this.nCols === 0){
+            if (i % this.nCols === 0 && i != 0){
                 drawingRow++
                 drawingCol = 0
             }
