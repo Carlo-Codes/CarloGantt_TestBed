@@ -1,10 +1,11 @@
 import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
 import { renderSettings } from './types/generalTypes'
-import GanttGrid from './pixiJS/GanttGrid'
+import GanttGrid from './engine/GanttGrid'
 import { Application } from 'pixijs'
-import {Viewport} from './pixiJS/viewport'
+import {Viewport} from './engine/viewport'
 import{GantTime} from './dateTime/gantTime'
+import GanttColumn from './ganttAbstraction/GanttColumns'
 
 /* 
 this is a react function for creating the gant chart object. it includes the viewport, the grid, the headings etc and brings it all together
@@ -36,17 +37,20 @@ function GanttChart(props:Props){
 
     const time = new GantTime(props.renderSettings)
     const viewport = new Viewport()
-    const grid = new GanttGrid(props.renderSettings)
+
+    //const grid = new GanttGrid(props.renderSettings)
+    //grid.draw()
+    const columnsDivs = time.getDivisions()
 
     viewport.setLimits({maxScale:5,minScale:1})
 
-    grid.draw()
+    
 
-    const columns = time.getDivisions()
+    
 
-    console.log(columns) // back here next, remove manual option for nCols in settings, replace with buffer size, implement column headers
+    console.log(columnsDivs) // back here next, remove manual option for nCols in settings, replace with buffer size, implement column headers
 
-    viewport.addGraphics(grid)
+    //viewport.addGraphics()
     
     const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
     
