@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 //import './App.css'
 import GanttChart from '../carloGantt.ts/GanttChart'
-import drawGanttGrid from '../carloGantt.ts/pixiJS/GanttGrid'
+import drawGanttGrid from '../carloGantt.ts/engine/GanttGrid'
 
 
 import { renderSettings } from '../carloGantt.ts/types/generalTypes'
@@ -25,6 +25,7 @@ const Settings:renderSettings = {
     timeUnit:"d",
     nRows:100,
     rowHeight:20,
+    columnWidth:100,
     backgroundColour:0x5BBA6F,
     gridLineColour:0x00FF00,
     maxScale:5,

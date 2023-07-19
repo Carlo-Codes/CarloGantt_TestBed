@@ -1,5 +1,6 @@
 import { renderSettings } from "../types/generalTypes"
 import { Graphics } from "pixijs"
+import * as dayjs from "dayjs"
 
 /*
  This class abstracts the column of a gantt chart, here all the properties for
@@ -10,7 +11,7 @@ import { Graphics } from "pixijs"
 
 class GanttColumn { 
 
-    private id:number // planning to be the date backwards
+    private id:string // planning to be the date backwards
 
     //Heading Properties - heading may want to be sperate (in postion) from the column
     private heading:string
@@ -29,10 +30,16 @@ class GanttColumn {
     private bodyColour?:number
     private lineWeight?:number
     private lineColour?:number
+
+    //PixiJS Graphics
+    private headingRect: Graphics
+    private columnRect : Graphics
+
+
    
     
 
-    constructor(id:number, heading:string, headingHeight:number, xPosition:number, yPosition:number, width:number,renderSettings:renderSettings, 
+    constructor(id:string, heading:string, headingHeight:number, xPosition:number, yPosition:number,renderSettings:renderSettings, 
         xPositionColumn?:number, yPositionColumn?:number //these params are here incase the heading and column are seperated in some way
         ){
         this.id = id
@@ -42,9 +49,16 @@ class GanttColumn {
         this.yPositionHeading = yPosition
         this.xPositionColumn = xPosition
         this.yPositionColumn = yPosition - headingHeight
-        this.columnWidth = width
+        this.columnWidth = renderSettings.columnWidth
         this.columnHeight = renderSettings.canvasHeight - yPosition
+        
+        this.headingRect = new Graphics()
+        this.columnRect = new Graphics()
 
+        //tests///
+        this.lineWeight = 1
+        this.lineColour = renderSettings.gridLineColour
+        /////////
 
     }
 
@@ -68,25 +82,31 @@ class GanttColumn {
         null
     }
 
-    render(){
-        const headingRect = new Graphics()
-        const columnRect = new Graphics()
+    getHeadingRect(){
+        return this.headingRect
+    }
+    getColumnRect(){
+        return this.columnRect
+    }
+
+    render(){ //start back here - add headings to the header rect.
+        
 
         if(this.lineWeight && this.lineColour){
-            headingRect.lineStyle(this.lineWeight, this.lineColour)
-            columnRect.lineStyle(this.lineWeight, this.lineColour)
+            this.headingRect.lineStyle(this.lineWeight, this.lineColour)
+            this.columnRect.lineStyle(this.lineWeight, this.lineColour)
         }
 
         if(this.headingColour){
-            headingRect.beginFill(this.headingColour)
+            this.headingRect.beginFill(this.headingColour)
         }
 
         if(this.bodyColour){
-            columnRect.beginFill(this.bodyColour)
+            this.columnRect.beginFill(this.bodyColour)
         }
 
-        headingRect.drawRect(this.xPositionHeading,this.yPositionHeading,this.columnWidth,this.headingHeight)
-        columnRect.drawRect(this.xPositionColumn,this.yPositionColumn,this.columnWidth,this.columnHeight)
+        this.headingRect.drawRect(this.xPositionHeading,this.yPositionHeading,this.columnWidth,this.headingHeight)
+        this.columnRect.drawRect(this.xPositionColumn,this.yPositionColumn,this.columnWidth,this.columnHeight)
         
     }
 }

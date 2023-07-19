@@ -5,6 +5,7 @@ type renderSettings = {
     timeUnit:"h"|"m"|"d"|"w"
     nRows:number,
     rowHeight:number,
+    columnWidth:number,
     backgroundColour:number,
     gridLineColour: number,
     maxScale: number,

@@ -1,5 +1,5 @@
 import { renderSettings } from "../types/generalTypes"
-import { Graphics } from "pixijs"
+import { Graphics, settings } from "pixijs"
 
 
 
@@ -10,6 +10,7 @@ class GanttGrid extends Graphics{
     private nCols:number
     private nRows:number
     private gridLineColour
+    private colWidth:number
 
     constructor(settings:renderSettings){
         super()
@@ -19,10 +20,11 @@ class GanttGrid extends Graphics{
         this.nCols = settings.timeBuffer
         this.nRows = settings.nRows
         this.gridLineColour = settings.gridLineColour
+        this.colWidth = settings.rowWidth
     }
 
     draw(){
-        const cellwidth = 100//this.canvasWidth / this.nCols
+        const cellwidth = this.colWidth
         const cellheight = this.rowHeight
         const nCells = this.nCols * this.nRows
         let drawingRow = 0

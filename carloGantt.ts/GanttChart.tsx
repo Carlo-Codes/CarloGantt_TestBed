@@ -5,6 +5,7 @@ import GanttGrid from './engine/GanttGrid'
 import { Application } from 'pixijs'
 import {Viewport} from './engine/viewport'
 import{GantTime} from './dateTime/gantTime'
+
 import GanttColumn from './ganttAbstraction/GanttColumns'
 
 /* 
@@ -38,9 +39,28 @@ function GanttChart(props:Props){
     const time = new GantTime(props.renderSettings)
     const viewport = new Viewport()
 
-    //const grid = new GanttGrid(props.renderSettings)
-    //grid.draw()
+
+    //setting up columns -- make this cleaner in future with a function or something
     const columnsDivs = time.getDivisions()
+    const ganttColumns: GanttColumn[] = []
+    for(let i = 0; i < columnsDivs.length; i++){
+
+        const id = columnsDivs[i].toISOString()
+        const heading = columnsDivs[i].toString()
+        const xPos = i * props.renderSettings.columnWidth
+
+        const column = new GanttColumn(id,heading,20,xPos,0,props.renderSettings)
+        column.render()
+        
+        ganttColumns.push(column)
+    
+        viewport.addGraphics(column.getColumnRect())
+        viewport.addGraphics(column.getHeadingRect())
+        
+    }
+    /////////////////////////////////////////////////////////////////////////////////
+
+    console.log(ganttColumns)
 
     viewport.setLimits({maxScale:5,minScale:1})
 
@@ -50,7 +70,7 @@ function GanttChart(props:Props){
 
     console.log(columnsDivs) // back here next, remove manual option for nCols in settings, replace with buffer size, implement column headers
 
-    //viewport.addGraphics()
+    
     
     const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
     
