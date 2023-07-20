@@ -1,0 +1,5 @@
+@font-face {
+    font-family: Output Sans;
+    src: url(output-sans.woff2) format('woff2'),
+         url(output-sans.woff) format('woff');
+  }

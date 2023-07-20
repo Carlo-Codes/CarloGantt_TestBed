@@ -1,12 +1,10 @@
 import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
 import { renderSettings } from './types/generalTypes'
-import GanttGrid from './engine/GanttGrid'
 import { Application } from 'pixijs'
-import {Viewport} from './engine/viewport'
-import{GantTime} from './dateTime/gantTime'
+import GanttLayout from './ganttAbstraction/GanttLayout'
 
-import GanttColumn from './ganttAbstraction/GanttColumns'
+
 
 /* 
 this is a react function for creating the gant chart object. it includes the viewport, the grid, the headings etc and brings it all together
@@ -36,47 +34,14 @@ function GanttChart(props:Props){
         backgroundColor: props.renderSettings.backgroundColour,
     })
 
-    const time = new GantTime(props.renderSettings)
-    const viewport = new Viewport()
-
-
-    //setting up columns -- make this cleaner in future with a function or something
-    const columnsDivs = time.getDivisions()
-    const ganttColumns: GanttColumn[] = []
-    for(let i = 0; i < columnsDivs.length; i++){
-
-        const id = columnsDivs[i].toISOString()
-        const heading = columnsDivs[i].toString()
-        const xPos = i * props.renderSettings.columnWidth
-
-        const column = new GanttColumn(id,heading,20,xPos,0,props.renderSettings)
-        column.render()
-        
-        ganttColumns.push(column)
     
-        viewport.addGraphics(column.getColumnRect())
-        viewport.addGraphics(column.getHeadingRect())
-        
-    }
-    /////////////////////////////////////////////////////////////////////////////////
+    const layout = new GanttLayout(props.renderSettings)
+    layout.viewPort.setLimits({})
+    layout.generateColumns()
 
-    console.log(ganttColumns)
 
-    viewport.setLimits({maxScale:5,minScale:1})
 
     
-
-    
-
-    console.log(columnsDivs) // back here next, remove manual option for nCols in settings, replace with buffer size, implement column headers
-
-    
-    
-    const view = new DOMMatrix ([1, 0, 0, 1, 0, 0])
-    
-
-
-
     const handleMouseDown = (e:MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -100,7 +65,7 @@ function GanttChart(props:Props){
         const dx = new_mX - mX
         const dy = new_mY - mY
         
-        viewport.pan(dx,dy)
+        layout.viewPort.pan(dx,dy)
         
         mY = new_mY
         mX = new_mX
@@ -109,15 +74,14 @@ function GanttChart(props:Props){
     const handleMouseWheel = (e:WheelEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        const factor = 1 + (-e.deltaY * 0.001)
-
-        console.log(factor)
-        viewport.zoom(factor,e.clientX, e.clientY)
+        //const factor = 1 + (-e.deltaY * 0.001) this is from when we were able to actually zoom in not needed.
+        layout.zoomColumns(e.deltaY/10)
+        
     }
 
     const draw = ()=>{
         
-            app.stage.addChild(viewport)
+            app.stage.addChild(layout.viewPort)
             
         }
 

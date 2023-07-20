@@ -11,15 +11,15 @@ export class GantTime{
 
     private timeDivisions : [dayjs.Dayjs]
 
-    constructor(settings:renderSettings){
+    constructor(timeBuffer:number, timeUnit:"h"|"m"|"d"|"w"){
         const now = dayjs()
         this.timeDivisions = [now]
 
-        for(let i = settings.timeBuffer; i > 0; i--){
-            this.timeDivisions.push(now.subtract(i,settings.timeUnit))
+        for(let i = timeBuffer; i > 0; i--){
+            this.timeDivisions.push(now.subtract(i,timeUnit))
         }
-        for(let i = 0; i < settings.timeBuffer; i++){
-            this.timeDivisions.push(now.add(i,settings.timeUnit))
+        for(let i = 0; i < timeBuffer; i++){
+            this.timeDivisions.push(now.add(i,timeUnit))
         }
     }
 

@@ -31,6 +31,7 @@ const Settings:renderSettings = {
     maxScale:5,
     minScale:1,
     
+    
   }
 
 

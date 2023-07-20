@@ -1,5 +1,6 @@
 import { renderSettings } from "../types/generalTypes"
-import { Graphics } from "pixijs"
+import { Text, TextStyle, Graphics } from "pixijs"
+import 'fontfaceobserver'
 import * as dayjs from "dayjs"
 
 /*
@@ -34,12 +35,19 @@ class GanttColumn {
     //PixiJS Graphics
     private headingRect: Graphics
     private columnRect : Graphics
+    private headingText: Text
+    private headingTextStyle: TextStyle
 
+
+    private setHeadingText(){
+        this.headingText.position.set(this.xPositionHeading, this.yPositionHeading);
+        
+    }
 
    
     
 
-    constructor(id:string, heading:string, headingHeight:number, xPosition:number, yPosition:number,renderSettings:renderSettings, 
+    constructor(id:string, heading:string, headingHeight:number, xPosition:number, yPosition:number,columnWidth:number, columnHeight:number, 
         xPositionColumn?:number, yPositionColumn?:number //these params are here incase the heading and column are seperated in some way
         ){
         this.id = id
@@ -49,21 +57,31 @@ class GanttColumn {
         this.yPositionHeading = yPosition
         this.xPositionColumn = xPosition
         this.yPositionColumn = yPosition - headingHeight
-        this.columnWidth = renderSettings.columnWidth
-        this.columnHeight = renderSettings.canvasHeight - yPosition
+        this.columnWidth = columnWidth
+        this.columnHeight = columnHeight- yPosition
         
         this.headingRect = new Graphics()
         this.columnRect = new Graphics()
+        
 
-        //tests///
+        //tests/// - to be turned into some sort of object for passing around
+        this.headingTextStyle = new TextStyle({
+            align: "center",
+            fill: "#754c24",
+            fontSize: 10
+        });
         this.lineWeight = 1
-        this.lineColour = renderSettings.gridLineColour
+        this.lineColour = 0x00FF00
         /////////
+
+        this.headingText = new Text(this.heading, this.headingTextStyle)
+        
 
     }
 
-    setWidth(width:number){
-        null
+
+    getColumnWidth(){
+        return this.columnWidth
     }
 
     setColour(colour:number){
@@ -89,6 +107,16 @@ class GanttColumn {
         return this.columnRect
     }
 
+    setXPosition(x:number){
+        this.xPositionHeading = x
+        this.xPositionColumn = x
+    }
+
+    getXPosition(){
+        return this.xPositionColumn
+    }
+
+
     render(){ //start back here - add headings to the header rect.
         
 
@@ -106,8 +134,19 @@ class GanttColumn {
         }
 
         this.headingRect.drawRect(this.xPositionHeading,this.yPositionHeading,this.columnWidth,this.headingHeight)
+        this.setHeadingText()
+        this.headingRect.addChild(this.headingText)
         this.columnRect.drawRect(this.xPositionColumn,this.yPositionColumn,this.columnWidth,this.columnHeight)
         
+    }
+
+    setColumnWidth(width:number){
+        this.columnWidth = width
+    }
+
+    clear(){
+        this.headingRect.clear()
+        this.columnRect.clear()
     }
 }
 
