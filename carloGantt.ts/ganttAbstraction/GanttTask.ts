@@ -53,6 +53,7 @@ export default class GanttTask{
     render(){
         this.detailsRect.lineStyle(this.lineWeight,this.lineColour)
         this.detailsRect.drawRect(this.detailsPositionX, this.detailsPostionY, this.detailsWidth, this.rowHeight)
+        this.rowRect.lineStyle(this.lineWeight, this.lineColour)
         this.rowRect.drawRect(this.rowBodyPositionX, this.rowBodypositionY, this.rowWidth, this.rowHeight)
     }
 

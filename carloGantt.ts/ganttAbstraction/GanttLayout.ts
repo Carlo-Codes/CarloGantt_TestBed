@@ -59,16 +59,21 @@ class GanttLayout{
     }
 
     generateTasks(){
+        console.log(this.tasks)
         if(this.tasks){
         for(let i = 0; i < this.tasks.length; i++){
-            const yPos = i * this.rowHeights
+            const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
             const xPos = 0
             const rowWidth = this.ganttColumns.length * this.columnWidths
             const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,300,)
+            
+            tempTask.render()
+            
             this.ganttTasks.push(tempTask)
 
             this.viewPort.addGraphics(tempTask.getDetailsRect())
             this.viewPort.addGraphics(tempTask.getRowRect())
+            
         }
     }
     }

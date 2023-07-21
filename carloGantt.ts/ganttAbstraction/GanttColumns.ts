@@ -116,6 +116,10 @@ class GanttColumn {
         return this.xPositionColumn
     }
 
+    getHeadingHeight(){
+        return this.headingHeight
+    }
+
 
     render(){ //start back here - add headings to the header rect.
         
