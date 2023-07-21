@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs"
+
 type renderSettings = {
     canvasHeight:number,
     canvasWidth:number,
@@ -12,4 +14,11 @@ type renderSettings = {
     minScale : number,
 }
 
-export type {renderSettings}
+type taskType = {
+    id:string,
+    name:string,
+    startDate:Dayjs
+    endDate:Dayjs
+}
+
+export type {renderSettings, taskType}
