@@ -1,7 +1,8 @@
 import{GantTime} from '../dateTime/gantTime'
-import { renderSettings } from '../types/generalTypes'
+import { renderSettings, taskType } from '../types/generalTypes'
 import GanttColumn from './GanttColumns'
 import {Viewport} from '../engine/viewport'
+import GanttTask from './GanttTask'
 
 /* this is where the columns for the chart is layed out, the time is set and interactivity for zooming/changing time divisions in is handled */
 
@@ -17,14 +18,27 @@ class GanttLayout{
     private columnWidths : number
     private columnHeights : number
 
-    constructor(renderSettings:renderSettings){
+    private tasks ?: taskType[]
+    private ganttTasks: GanttTask[]
+    private rowHeights : number
+    private rowWidths? : number
+
+    constructor(renderSettings:renderSettings, tasks?:taskType[]){
         this.time = new GantTime(renderSettings.timeBuffer,renderSettings.timeUnit)
         this.ganttColumns = []
+        this.ganttTasks = []
         this.columnHeights = renderSettings.canvasHeight
         this.viewPort = new Viewport()
         this.masterZoomTracking = 0
         this.timeMode = renderSettings.timeUnit
         this.columnWidths = renderSettings.columnWidth
+        this.rowHeights = renderSettings.rowHeight
+        
+
+        if(tasks){
+            this.tasks = tasks
+        }
+
     }
 
     generateColumns(){
@@ -43,6 +57,25 @@ class GanttLayout{
             this.viewPort.addGraphics(column.getHeadingRect())
         }
     }
+
+    generateTasks(){
+        if(this.tasks){
+        for(let i = 0; i < this.tasks.length; i++){
+            const yPos = i * this.rowHeights
+            const xPos = 0
+            const rowWidth = this.ganttColumns.length * this.columnWidths
+            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,300,)
+            this.ganttTasks.push(tempTask)
+
+            this.viewPort.addGraphics(tempTask.getDetailsRect())
+            this.viewPort.addGraphics(tempTask.getRowRect())
+        }
+    }
+    }
+
+    addTasks(tasks:taskType[]){
+        this.tasks?.concat(tasks)
+    } 
 
     zoomColumns(widthDelta:number){
         this.columnWidths += widthDelta

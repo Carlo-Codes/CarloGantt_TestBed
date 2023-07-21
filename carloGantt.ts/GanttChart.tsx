@@ -1,8 +1,9 @@
 import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
-import { renderSettings } from './types/generalTypes'
+import { renderSettings, taskType } from './types/generalTypes'
 import { Application } from 'pixijs'
 import GanttLayout from './ganttAbstraction/GanttLayout'
+import dayjs from 'dayjs'
 
 
 
@@ -34,10 +35,18 @@ function GanttChart(props:Props){
         backgroundColor: props.renderSettings.backgroundColour,
     })
 
+    let tasks:taskType []= [{
+        id:"hjikl",
+        name:"test",
+        startDate: dayjs(),
+        endDate:dayjs(23),
+        
+    }]
     
-    const layout = new GanttLayout(props.renderSettings)
+    const layout = new GanttLayout(props.renderSettings,tasks)
     layout.viewPort.setLimits({})
     layout.generateColumns()
+    layout.generateTasks()
 
 
 
