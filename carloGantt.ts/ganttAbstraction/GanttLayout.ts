@@ -8,8 +8,10 @@ import GanttTask from './GanttTask'
 
 class GanttLayout{
     
-    time : GantTime
-    viewPort : Viewport
+    private time : GantTime
+    private ganttViewPort : Viewport
+    private columnHeadingViewport : Viewport
+    private taskDetialsViewport : Viewport
 
     private masterZoomTracking :number //0 - 100 to track how in or out the user has actuqally zoomed
     private timeMode : "h"|"d"|"m"|"w" // to dispaly column headings as time
@@ -17,6 +19,7 @@ class GanttLayout{
     private ganttColumns: GanttColumn[]
     private columnWidths : number
     private columnHeights : number
+    private taskDetailsWidth : number
 
     private tasks ?: taskType[]
     private ganttTasks: GanttTask[]
@@ -28,13 +31,15 @@ class GanttLayout{
         this.ganttColumns = []
         this.ganttTasks = []
         this.columnHeights = renderSettings.canvasHeight
-        this.viewPort = new Viewport()
+        this.ganttViewPort = new Viewport()
+        this.columnHeadingViewport = new Viewport()
+        this.taskDetialsViewport = new Viewport()
         this.masterZoomTracking = 0
         this.timeMode = renderSettings.timeUnit
         this.columnWidths = renderSettings.columnWidth
         this.rowHeights = renderSettings.rowHeight
+        this.taskDetailsWidth = renderSettings.taskDetailsWidth
         
-
         if(tasks){
             this.tasks = tasks
         }
@@ -47,14 +52,14 @@ class GanttLayout{
             const date = columnsDivs[i]
             const id = date.toISOString()
             const heading = date.format("D/MMM/YYYY")
-            const xPos = i * this.columnWidths
+            const xPos = i * this.columnWidths + this.taskDetailsWidth
     
             const column = new GanttColumn(id,heading,20,xPos,0,this.columnWidths,this.columnHeights)
             column.render()
             
             this.ganttColumns.push(column)
-            this.viewPort.addGraphics(column.getColumnRect())
-            this.viewPort.addGraphics(column.getHeadingRect())
+            this.ganttViewPort.addGraphics(column.getColumnRect())
+            this.columnHeadingViewport.addGraphics(column.getHeadingRect())
         }
     }
 
@@ -65,14 +70,14 @@ class GanttLayout{
             const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
             const xPos = 0
             const rowWidth = this.ganttColumns.length * this.columnWidths
-            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,300,)
+            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.taskDetailsWidth)
             
             tempTask.render()
             
             this.ganttTasks.push(tempTask)
 
-            this.viewPort.addGraphics(tempTask.getDetailsRect())
-            this.viewPort.addGraphics(tempTask.getRowRect())
+            this.taskDetialsViewport.addGraphics(tempTask.getDetailsRect())
+            this.ganttViewPort.addGraphics(tempTask.getRowRect())
             
         }
     }
@@ -98,6 +103,22 @@ class GanttLayout{
         
         
         
+    }
+
+    getGanttViewport(){
+        return this.ganttViewPort
+    }
+
+    getColumnHeadingViewport(){
+        return this.columnHeadingViewport
+    }
+
+    getTaskDetialsViewport(){
+        return this.taskDetialsViewport
+    }
+
+    getTime(){
+        return this.time
     }
 }
 

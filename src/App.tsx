@@ -4,7 +4,8 @@ import viteLogo from '/vite.svg'
 //import './App.css'
 import GanttChart from '../carloGantt.ts/GanttChart'
 import drawGanttGrid from '../carloGantt.ts/engine/GanttGrid'
-
+import dayjs from 'dayjs'
+import { taskType } from '../carloGantt.ts/types/generalTypes'
 
 import { renderSettings } from '../carloGantt.ts/types/generalTypes'
 
@@ -30,16 +31,30 @@ const Settings:renderSettings = {
     gridLineColour:0x00FF00,
     maxScale:5,
     minScale:1,
+    taskDetailsWidth:300,
     
     
   }
+
+      let tasks:taskType []= [{
+        id:"hjikl",
+        name:"test",
+        startDate: dayjs(),
+        endDate:dayjs(23),
+        
+    },{
+      id:"hjikl",
+      name:"test",
+      startDate: dayjs(23),
+      endDate:dayjs(30),
+  }]
 
 
 function App() {
   const [count, setCount] = useState(0)
   
   return (
-    <GanttChart renderSettings={Settings}></GanttChart>
+    <GanttChart renderSettings={Settings} tasks={tasks}></GanttChart>
   )
 }
 

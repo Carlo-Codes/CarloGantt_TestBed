@@ -1,6 +1,6 @@
 import { Graphics } from "pixijs"
 import { renderSettings, taskType } from "../types/generalTypes"
-import { Dayjs } from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 
 export default class GanttTask{
 
@@ -35,8 +35,8 @@ export default class GanttTask{
         this.detailsWidth = detailsWidth
 
         this.detailsName = task.name
-        this.detailsStartTime = task.startDate
-        this.detailsEndTime = task.endDate
+        this.detailsStartTime = dayjs(task.startDate)
+        this.detailsEndTime = dayjs(task.endDate)
 
         this.rowBodyPositionX = this.detailsPositionX + this.detailsWidth
         this.rowBodypositionY = positionY

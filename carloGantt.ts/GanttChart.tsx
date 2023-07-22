@@ -13,7 +13,8 @@ Also, it handles all the events from the mouse.
 */
 
 type Props ={
-    renderSettings:renderSettings
+    renderSettings:renderSettings,
+    tasks:taskType [],
 }
 
 function GanttChart(props:Props){
@@ -35,16 +36,10 @@ function GanttChart(props:Props){
         backgroundColor: props.renderSettings.backgroundColour,
     })
 
-    let tasks:taskType []= [{
-        id:"hjikl",
-        name:"test",
-        startDate: dayjs(),
-        endDate:dayjs(23),
-        
-    }]
+
     
-    const layout = new GanttLayout(props.renderSettings,tasks)
-    layout.viewPort.setLimits({})
+    const layout = new GanttLayout(props.renderSettings,props.tasks)
+    layout.getGanttViewport().setLimits({})
     layout.generateColumns()
     layout.generateTasks()
 
@@ -74,7 +69,9 @@ function GanttChart(props:Props){
         const dx = new_mX - mX
         const dy = new_mY - mY
         
-        layout.viewPort.pan(dx,dy)
+        layout.getGanttViewport().pan(dx,dy)
+        layout.getColumnHeadingViewport().pan(dx,0)
+        layout.getTaskDetialsViewport().pan(0,dy)
         
         mY = new_mY
         mX = new_mX
@@ -90,7 +87,9 @@ function GanttChart(props:Props){
 
     const draw = ()=>{
         
-            app.stage.addChild(layout.viewPort)
+            app.stage.addChild(layout.getGanttViewport())
+            app.stage.addChild(layout.getTaskDetialsViewport())
+            app.stage.addChild(layout.getColumnHeadingViewport())
             
         }
 

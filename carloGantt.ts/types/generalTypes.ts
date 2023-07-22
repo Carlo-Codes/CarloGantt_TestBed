@@ -1,5 +1,6 @@
 import dayjs, { Dayjs } from "dayjs"
 
+
 type renderSettings = {
     canvasHeight:number,
     canvasWidth:number,
@@ -12,6 +13,7 @@ type renderSettings = {
     gridLineColour: number,
     maxScale: number,
     minScale : number,
+    taskDetailsWidth:number
 }
 
 type taskType = {
