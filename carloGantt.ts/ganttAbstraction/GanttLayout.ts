@@ -3,6 +3,7 @@ import { renderSettings, taskType } from '../types/generalTypes'
 import GanttColumn from './GanttColumns'
 import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
+import { Graphics } from 'pixijs'
 
 /* this is where the columns for the chart is layed out, the time is set and interactivity for zooming/changing time divisions in is handled */
 
@@ -12,6 +13,7 @@ class GanttLayout{
     private ganttViewPort : Viewport
     private columnHeadingViewport : Viewport
     private taskDetialsViewport : Viewport
+    private detailsPanelViewport : Viewport
 
     private masterZoomTracking :number //0 - 100 to track how in or out the user has actuqally zoomed
     private timeMode : "h"|"d"|"m"|"w" // to dispaly column headings as time
@@ -34,6 +36,11 @@ class GanttLayout{
         this.ganttViewPort = new Viewport()
         this.columnHeadingViewport = new Viewport()
         this.taskDetialsViewport = new Viewport()
+        this.detailsPanelViewport = new Viewport()
+
+        
+        
+
         this.masterZoomTracking = 0
         this.timeMode = renderSettings.timeUnit
         this.columnWidths = renderSettings.columnWidth
@@ -64,13 +71,13 @@ class GanttLayout{
     }
 
     generateTasks(){
-        console.log(this.tasks)
+
         if(this.tasks){
         for(let i = 0; i < this.tasks.length; i++){
             const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
             const xPos = 0
             const rowWidth = this.ganttColumns.length * this.columnWidths
-            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.taskDetailsWidth)
+            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.detailsPanelViewport)
             
             tempTask.render()
             
@@ -79,8 +86,16 @@ class GanttLayout{
             this.taskDetialsViewport.addGraphics(tempTask.getDetailsRect())
             this.ganttViewPort.addGraphics(tempTask.getRowRect())
             
+            }   
         }
     }
+
+    generateDetailsPanel(x:number, y:number, width:number, height:number){
+        this.detailsPanelViewport.x = x
+        this.detailsPanelViewport.y = y
+        this.detailsPanelViewport.width = width
+        this.detailsPanelViewport.height = height
+
     }
 
     addTasks(tasks:taskType[]){
@@ -99,7 +114,7 @@ class GanttLayout{
             this.ganttColumns[i].setColumnWidth(this.columnWidths)
             this.ganttColumns[i].render()
         }
-        console.log(this.ganttColumns[0].getColumnWidth())
+  
         
         
         
@@ -115,6 +130,10 @@ class GanttLayout{
 
     getTaskDetialsViewport(){
         return this.taskDetialsViewport
+    }
+
+    getDetailsPanelViewport(){
+        return this.detailsPanelViewport
     }
 
     getTime(){

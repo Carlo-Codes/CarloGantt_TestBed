@@ -4,6 +4,7 @@ import { renderSettings, taskType } from './types/generalTypes'
 import { Application } from 'pixijs'
 import GanttLayout from './ganttAbstraction/GanttLayout'
 import dayjs from 'dayjs'
+import { rgb2hex } from 'pixijs/utils'
 
 
 
@@ -43,6 +44,22 @@ function GanttChart(props:Props){
     layout.generateColumns()
     layout.generateTasks()
 
+    const columnHeadingBackgroundColour = rgb2hex([20,50,60,0])
+    const taskdetailsBackgroundColour = rgb2hex([233,0,100])
+    const ganttBackgroundColour = rgb2hex([200,255,0])
+    const detailsPanelBackgroundColour = rgb2hex([100,0,0])
+
+    layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
+    layout.getTaskDetialsViewport().addBackgroundColour(taskdetailsBackgroundColour,100)
+    layout.getGanttViewport().addBackgroundColour(ganttBackgroundColour,100)
+
+    layout.generateDetailsPanel(0,0,300,props.renderSettings.canvasHeight)
+    layout.getDetailsPanelViewport().addBackgroundColour(detailsPanelBackgroundColour, 100)
+    
+
+  /*   console.log(layout.getColumnHeadingViewport().getBounds())
+    console.log(layout.getGanttViewport().getBounds())
+    console.log(layout.getTaskDetialsViewport().getBounds()) */
 
 
     

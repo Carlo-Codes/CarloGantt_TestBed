@@ -1,6 +1,7 @@
 import { Graphics, Text, TextStyle } from "pixijs"
 import { renderSettings, taskType } from "../types/generalTypes"
 import dayjs, { Dayjs } from "dayjs"
+import { Viewport } from "../engine/viewport"
 
 export default class GanttTask{
 
@@ -26,13 +27,15 @@ export default class GanttTask{
     private lineWeight:number
     private lineColour:number
 
-    constructor(task:taskType, positionX:number, positionY:number, height:number, rowWidth:number, rowHeight:number, detailsWidth:number){
+    constructor(task:taskType, positionX:number, positionY:number, height:number, rowWidth:number, rowHeight:number, detailsPanelViewport:Viewport){
         
+        //tests/// - to be turned into some sort of object for passing around
         this.detailTextStyle = new TextStyle({
             align: "center",
             fill: "#754c24",
             fontSize: 10
-        });
+        })
+
         this.lineWeight = 1
         this.lineColour = 0x00FF00
 
@@ -40,9 +43,9 @@ export default class GanttTask{
         this.rowHeight = rowHeight
         
 
-        this.detailsPositionX = positionX
-        this.detailsPostionY = positionY
-        this.detailsWidth = detailsWidth
+        this.detailsPositionX = detailsPanelViewport.position.x
+        this.detailsPostionY = detailsPanelViewport.position.y
+        this.detailsWidth = detailsPanelViewport.width
 
         this.detailsStartTime = dayjs(task.startDate)
         this.detailsEndTime = dayjs(task.endDate)
@@ -58,7 +61,6 @@ export default class GanttTask{
 
 
 
-        //tests/// - to be turned into some sort of object for passing around
 
     }
 

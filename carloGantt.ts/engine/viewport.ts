@@ -1,5 +1,7 @@
-import { Container, Graphics, Matrix } from "pixijs";
+import { Container, Graphics, Matrix, ColorMatrixFilter } from "pixijs";
 import {viewPortLimits} from "../types/pixiJsTypes"
+
+
 
 
 export class Viewport extends Container{
@@ -8,6 +10,7 @@ export class Viewport extends Container{
     constructor(matrix:Matrix = new Matrix(1, 0, 0, 1, 0, 0)){
         super()
         this.viewMatrix = matrix
+        
         this.limits = {
             minX:null,
             minY:null, 
@@ -54,6 +57,19 @@ export class Viewport extends Container{
 
     addGraphics(graphics:Graphics){
         this.addChild(graphics)
+    }
+
+    addBackgroundColour(backgroundcolour:number, /* hex colour */ alpha:number){
+        const rect = new Graphics()
+        const rectx = this.getBounds().x
+        const recty = this.getBounds().y
+        const rectH = this.getBounds().height
+        const rectW = this.getBounds().width
+        rect.beginFill(backgroundcolour)
+        rect.drawRect(rectx,recty, rectW, rectH)
+        rect.alpha = alpha
+        this.addChildAt(rect,0)
+        
     }
 
     setLimits(newLimits:viewPortLimits){
