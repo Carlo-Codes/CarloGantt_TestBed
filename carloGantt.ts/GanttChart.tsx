@@ -40,6 +40,7 @@ function GanttChart(props:Props){
 
     
     const layout = new GanttLayout(props.renderSettings,props.tasks)
+    layout.generateDetailsPanel(0,0,300,props.renderSettings.canvasHeight)
     layout.getGanttViewport().setLimits({})
     layout.generateColumns()
     layout.generateTasks()
@@ -47,13 +48,13 @@ function GanttChart(props:Props){
     const columnHeadingBackgroundColour = rgb2hex([20,50,60,0])
     const taskdetailsBackgroundColour = rgb2hex([233,0,100])
     const ganttBackgroundColour = rgb2hex([200,255,0])
-    const detailsPanelBackgroundColour = rgb2hex([100,0,0])
+    const detailsPanelBackgroundColour = rgb2hex([0,0,0])
 
     layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
     layout.getTaskDetialsViewport().addBackgroundColour(taskdetailsBackgroundColour,100)
     layout.getGanttViewport().addBackgroundColour(ganttBackgroundColour,100)
 
-    layout.generateDetailsPanel(0,0,300,props.renderSettings.canvasHeight)
+    
     layout.getDetailsPanelViewport().addBackgroundColour(detailsPanelBackgroundColour, 100)
     
 
@@ -88,7 +89,7 @@ function GanttChart(props:Props){
         
         layout.getGanttViewport().pan(dx,dy)
         layout.getColumnHeadingViewport().pan(dx,0)
-        layout.getTaskDetialsViewport().pan(0,dy)
+        layout.getDetailsPanelViewport().pan(0,dy)
         
         mY = new_mY
         mX = new_mX
@@ -105,6 +106,7 @@ function GanttChart(props:Props){
     const draw = ()=>{
         
             app.stage.addChild(layout.getGanttViewport())
+            app.stage.addChild(layout.getDetailsPanelViewport())
             app.stage.addChild(layout.getTaskDetialsViewport())
             app.stage.addChild(layout.getColumnHeadingViewport())
             

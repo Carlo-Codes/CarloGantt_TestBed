@@ -77,7 +77,7 @@ class GanttLayout{
             const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
             const xPos = 0
             const rowWidth = this.ganttColumns.length * this.columnWidths
-            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.detailsPanelViewport)
+            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.detailsPanelViewport, this.columnHeadingViewport.height)
             
             tempTask.render()
             
