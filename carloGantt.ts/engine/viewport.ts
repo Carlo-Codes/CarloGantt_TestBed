@@ -25,7 +25,11 @@ export class Viewport extends Container{
 
     }
 
-    generateBackroundRect
+    generateBackroundPanel(x:number, y:number, h:number, w:number, colour:number){ //for when you want to specify an empty panel
+        this.backgroundRect.beginFill(colour)
+        this.backgroundRect.drawRect(x,y, w, h)
+        this.addChildAt(this.backgroundRect,0)
+    }
 
     zoom(factor:number, X:number, Y:number){
         if(this.limits){
@@ -63,7 +67,7 @@ export class Viewport extends Container{
         this.addChild(graphics)
     }
 
-    addBackgroundColour(backgroundcolour:number, /* hex colour */ alpha:number){
+    addBackgroundColour(backgroundcolour:number, /* hex colour */ alpha:number){ //for when you just want to add abackground
         const rectx = this.getBounds().x
         const recty = this.getBounds().y
         const rectH = this.getBounds().height
@@ -83,9 +87,6 @@ export class Viewport extends Container{
                 this.limits[key as keyof viewPortLimits] = newLimits[key as keyof viewPortLimits]
             }
         }
-        
-    
-
 
     }
 

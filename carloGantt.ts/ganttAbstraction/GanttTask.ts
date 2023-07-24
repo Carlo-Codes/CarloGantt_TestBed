@@ -27,7 +27,7 @@ export default class GanttTask{
     private lineWeight:number
     private lineColour:number
 
-    constructor(task:taskType, positionX:number, positionY:number, height:number, rowWidth:number, rowHeight:number, detailsPanelViewport:Viewport, detailsPanelHeadingHeight:number){
+    constructor(task:taskType, positionX:number, positionY:number, height:number, rowWidth:number, rowHeight:number, detailsPanelWidth:number, detailsPanelHeadingHeight:number){
         
         //tests/// - to be turned into some sort of object for passing around
         this.detailTextStyle = new TextStyle({
@@ -38,19 +38,22 @@ export default class GanttTask{
 
         this.lineWeight = 1
         this.lineColour = 0x00FF00
+        ////
 
+        
         this.task = task
         this.rowHeight = rowHeight
         
 
-        this.detailsPositionX = detailsPanelViewport.position.x
-        this.detailsPostionY = detailsPanelViewport.position.y + detailsPanelHeadingHeight
-        this.detailsWidth = detailsPanelViewport.width
+        this.detailsPositionX = positionX
+        this.detailsPostionY = positionY
+        this.detailsWidth = detailsPanelWidth
+        console.log(this.detailsWidth)
 
         this.detailsStartTime = dayjs(task.startDate)
         this.detailsEndTime = dayjs(task.endDate)
 
-        this.rowBodyPositionX = this.detailsPositionX + this.detailsWidth
+        this.rowBodyPositionX = positionX + detailsPanelWidth
         this.rowBodypositionY = positionY 
         this.rowWidth = rowWidth 
 

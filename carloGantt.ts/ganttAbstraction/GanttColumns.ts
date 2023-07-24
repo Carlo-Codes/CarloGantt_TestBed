@@ -44,8 +44,6 @@ class GanttColumn {
         
     }
 
-   
-    
 
     constructor(id:string, heading:string, headingHeight:number, xPosition:number, yPosition:number,columnWidth:number, columnHeight:number, 
         xPositionColumn?:number, yPositionColumn?:number //these params are here incase the heading and column are seperated in some way
@@ -56,9 +54,9 @@ class GanttColumn {
         this.xPositionHeading = xPosition
         this.yPositionHeading = yPosition
         this.xPositionColumn = xPosition
-        this.yPositionColumn = yPosition - headingHeight
+        this.yPositionColumn = yPosition
         this.columnWidth = columnWidth
-        this.columnHeight = columnHeight- yPosition
+        this.columnHeight = columnHeight
         
         this.headingRect = new Graphics()
         this.columnRect = new Graphics()

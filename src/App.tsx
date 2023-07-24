@@ -36,18 +36,16 @@ const Settings:renderSettings = {
     
   }
 
-      let tasks:taskType []= [{
-        id:"hjikl",
-        name:"test",
-        startDate: dayjs(),
-        endDate:dayjs(23),
-        
-    },{
-      id:"hjikl",
-      name:"test",
-      startDate: dayjs(23),
-      endDate:dayjs(30),
-  }]
+const tasks:taskType [] = [];
+
+for(let i = 0; i < 30; i ++){
+  tasks.push({
+    id:`Task ${i}`,
+    name:`Task ${i}`,
+    startDate:dayjs(),
+    endDate:dayjs()
+  })
+}
 
 
 function App() {
