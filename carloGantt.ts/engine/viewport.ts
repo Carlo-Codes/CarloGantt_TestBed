@@ -7,8 +7,10 @@ import {viewPortLimits} from "../types/pixiJsTypes"
 export class Viewport extends Container{
     private viewMatrix : Matrix
     private limits : viewPortLimits | null
+    private backgroundRect : Graphics
     constructor(matrix:Matrix = new Matrix(1, 0, 0, 1, 0, 0)){
         super()
+        this.backgroundRect = new Graphics()
         this.viewMatrix = matrix
         
         this.limits = {
@@ -22,6 +24,8 @@ export class Viewport extends Container{
 
 
     }
+
+    generateBackroundRect
 
     zoom(factor:number, X:number, Y:number){
         if(this.limits){
@@ -60,16 +64,14 @@ export class Viewport extends Container{
     }
 
     addBackgroundColour(backgroundcolour:number, /* hex colour */ alpha:number){
-        const rect = new Graphics()
         const rectx = this.getBounds().x
         const recty = this.getBounds().y
         const rectH = this.getBounds().height
         const rectW = this.getBounds().width
-        rect.beginFill(backgroundcolour)
-        rect.drawRect(rectx,recty, rectW, rectH)
-        rect.alpha = alpha
-        this.addChildAt(rect,0)
-        
+        this.backgroundRect.beginFill(backgroundcolour)
+        this.backgroundRect.drawRect(rectx,recty, rectW, rectH)
+        this.backgroundRect.alpha = alpha
+        this.addChildAt(this.backgroundRect,0)
     }
 
     setLimits(newLimits:viewPortLimits){

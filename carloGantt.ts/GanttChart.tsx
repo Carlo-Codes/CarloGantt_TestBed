@@ -40,7 +40,7 @@ function GanttChart(props:Props){
 
     
     const layout = new GanttLayout(props.renderSettings,props.tasks)
-    layout.generateDetailsPanel(0,0,300,props.renderSettings.canvasHeight)
+    layout.generateDetailsPanel(0,0,50,props.renderSettings.canvasHeight)
     layout.getGanttViewport().setLimits({})
     layout.generateColumns()
     layout.generateTasks()
@@ -52,15 +52,16 @@ function GanttChart(props:Props){
 
     layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
     layout.getTaskDetialsViewport().addBackgroundColour(taskdetailsBackgroundColour,100)
-    layout.getGanttViewport().addBackgroundColour(ganttBackgroundColour,100)
+    //layout.getGanttViewport().addBackgroundColour(ganttBackgroundColour,100)
 
     
     layout.getDetailsPanelViewport().addBackgroundColour(detailsPanelBackgroundColour, 100)
     
 
-  /*   console.log(layout.getColumnHeadingViewport().getBounds())
-    console.log(layout.getGanttViewport().getBounds())
-    console.log(layout.getTaskDetialsViewport().getBounds()) */
+    console.log("heading layout = " + layout.getColumnHeadingViewport().getBounds())
+    console.log(" gant layout"+ layout.getGanttViewport().getBounds())
+    console.log("task detis" + layout.getTaskDetialsViewport().getBounds())
+    console.log("details panel" + layout.getDetailsPanelViewport().getBounds())
 
 
     

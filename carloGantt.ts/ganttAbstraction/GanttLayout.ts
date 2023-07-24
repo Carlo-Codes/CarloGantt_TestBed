@@ -91,10 +91,11 @@ class GanttLayout{
     }
 
     generateDetailsPanel(x:number, y:number, width:number, height:number){
-        this.detailsPanelViewport.x = x
+        this.detailsPanelViewport
         this.detailsPanelViewport.y = y
         this.detailsPanelViewport.width = width
         this.detailsPanelViewport.height = height
+        this.detailsPanelViewport
 
     }
 
