@@ -53,12 +53,14 @@ function GanttChart(props:Props){
     const detailsPanelBackgroundColour = rgb2hex([200,200,200])
 
     layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
-    
-    
 
+    layout.panToNow()
+    
+    
+/* 
     console.log("heading layout = " + layout.getColumnHeadingViewport().getBounds())
     console.log(" gant layout"+ layout.getGanttViewport().getBounds())
-    console.log("details panel" + layout.getDetailsPanelViewport().getBounds())
+    console.log("details panel" + layout.getDetailsPanelViewport().getBounds()) */
 
 
     

@@ -63,6 +63,13 @@ export class Viewport extends Container{
 
     }
 
+    panTo(x:number, y:number){
+        const xAmount = -x - this.viewMatrix.tx
+        const yAmount = -y - this.viewMatrix.ty 
+        this.viewMatrix.translate(xAmount, yAmount)
+        
+    }
+
     addGraphics(graphics:Graphics){
         this.addChild(graphics)
     }

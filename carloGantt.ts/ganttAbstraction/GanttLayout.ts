@@ -5,6 +5,7 @@ import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
 import { Graphics } from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
+import dayjs from 'dayjs'
 
 /* this is where the columns for the chart is layed out, the time is set and interactivity for zooming/changing time divisions in is handled */
 
@@ -66,6 +67,7 @@ class GanttLayout{
 
     generateColumns(){
         const columnsDivs = this.time.getDivisions()
+        console.log(columnsDivs)
         for(let i = 0; i < columnsDivs.length; i++){
             const date = columnsDivs[i]
             const id = date.toISOString()
@@ -109,6 +111,14 @@ class GanttLayout{
     }
 
 
+    panToNow(){
+        const i = this.time.getiNow()
+        if(i == undefined) return
+        const x = this.ganttColumns[i].getXPosition()
+        this.columnHeadingViewport.panTo(x,0)
+        this.ganttViewPort.panTo(x, 0)
+
+    }
 
     addTasks(tasks:taskType[]){
         this.tasks?.concat(tasks)

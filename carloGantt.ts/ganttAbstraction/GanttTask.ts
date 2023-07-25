@@ -48,7 +48,7 @@ export default class GanttTask{
         this.detailsPositionX = positionX
         this.detailsPostionY = positionY
         this.detailsWidth = detailsPanelWidth
-        console.log(this.detailsWidth)
+      
 
         this.detailsStartTime = dayjs(task.startDate)
         this.detailsEndTime = dayjs(task.endDate)
