@@ -39,11 +39,14 @@ const Settings:renderSettings = {
 const tasks:taskType [] = [];
 
 for(let i = 0; i < 30; i ++){
+  const now = dayjs()
+  const startDate = now.add(i,'day')
+  const endDate = startDate.add(7, 'day')
   tasks.push({
     id:`Task ${i}`,
     name:`Task ${i}`,
-    startDate:dayjs(),
-    endDate:dayjs()
+    startDate:startDate,
+    endDate:endDate
   })
 }
 

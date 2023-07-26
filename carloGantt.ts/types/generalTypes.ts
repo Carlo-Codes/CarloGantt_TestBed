@@ -5,7 +5,7 @@ type renderSettings = {
     canvasHeight:number,
     canvasWidth:number,
     timeBuffer:number, //the amount of time either side of now on the gantt chart
-    timeUnit:"h"|"m"|"d"|"w"
+    timeUnit:dayjs.UnitTypeShort
     nRows:number,
     rowHeight:number,
     columnWidth:number,

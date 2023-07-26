@@ -14,6 +14,8 @@ class GanttColumn {
 
     private id:string // planning to be the date backwards
 
+    private dateTime:dayjs.Dayjs
+
     //Heading Properties - heading may want to be sperate (in postion) from the column
     private heading:string
     private headingHeight:number
@@ -45,11 +47,12 @@ class GanttColumn {
     }
 
 
-    constructor(id:string, heading:string, headingHeight:number, xPosition:number, yPosition:number,columnWidth:number, columnHeight:number, 
+    constructor(dayjs:dayjs.Dayjs, headingHeight:number, xPosition:number, yPosition:number,columnWidth:number, columnHeight:number, 
         xPositionColumn?:number, yPositionColumn?:number //these params are here incase the heading and column are seperated in some way
         ){
-        this.id = id
-        this.heading = heading
+        this.dateTime = dayjs
+        this.id = dayjs.toISOString()
+        this.heading = dayjs.format("D/MMM/YYYY")
         this.headingHeight = headingHeight
         this.xPositionHeading = xPosition
         this.yPositionHeading = yPosition
@@ -75,6 +78,10 @@ class GanttColumn {
         this.headingText = new Text(this.heading, this.headingTextStyle)
         
 
+    }
+
+    getDayjs(){
+        return this.dateTime
     }
 
 

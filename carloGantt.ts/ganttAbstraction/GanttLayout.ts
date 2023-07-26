@@ -5,7 +5,7 @@ import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
 import { Graphics } from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 
 /* this is where the columns for the chart is layed out, the time is set and interactivity for zooming/changing time divisions in is handled */
 
@@ -20,7 +20,7 @@ class GanttLayout{
     private detailsPanelColour:number
 
     private masterZoomTracking :number //0 - 100 to track how in or out the user has actuqally zoomed
-    private timeMode : "h"|"d"|"m"|"w" // to dispaly column headings as time
+    private timeMode : dayjs.UnitTypeShort
 
     private ganttColumns: GanttColumn[]
     private columnWidths : number
@@ -36,10 +36,12 @@ class GanttLayout{
     private headingHeight:number
     private chartHeight:number
 
+   
+
     
 
     constructor(renderSettings:renderSettings, tasks?:taskType[]){
-        this.time = new GantTime(renderSettings.timeBuffer,renderSettings.timeUnit)
+        this.time = new GantTime(renderSettings.timeBuffer,renderSettings)
         this.ganttColumns = []
         this.ganttTasks = []
     
@@ -70,15 +72,13 @@ class GanttLayout{
         console.log(columnsDivs)
         for(let i = 0; i < columnsDivs.length; i++){
             const date = columnsDivs[i]
-            const id = date.toISOString()
-            const heading = date.format("D/MMM/YYYY")
             const headingHeight = 20
             const xPos = i * this.columnWidths + this.taskDetailsWidth
             let height = 0
             if(this.tasks){
                 height = this.rowHeights * this.tasks.length + headingHeight
             }
-            const column = new GanttColumn(id,heading,headingHeight,xPos,0,this.columnWidths,height)
+            const column = new GanttColumn(date,headingHeight,xPos,0,this.columnWidths,height)
             column.render()
             
             this.ganttColumns.push(column)
@@ -94,7 +94,9 @@ class GanttLayout{
             const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
             const xPos = 0
             const rowWidth = this.ganttColumns.length * this.columnWidths
-            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.taskDetailsWidth , this.columnHeadingViewport.height)
+            const barStart = this.getXfromDate(this.tasks[i].startDate,this.ganttColumns,this.timeMode)
+            const barSpan = this.tasks[i].endDate.diff(this.tasks[i].startDate,this.timeMode)
+            const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.taskDetailsWidth,this.columnWidths,barStart,barSpan,this.timeMode)
             
             this.ganttTasks.push(tempTask)
 
@@ -110,6 +112,13 @@ class GanttLayout{
         this.detailsPanelViewport.generateBackroundPanel(0,0,this.chartHeight,this.taskDetailsWidth,this.detailsPanelColour)
     }
 
+    getXfromDate(date:Dayjs, columns:GanttColumn[], timeUnit:dayjs.UnitTypeShort){
+        for(let i = 0; i < columns.length; i++){
+            if(columns[i].getDayjs().isSame(date,timeUnit)){
+                return columns[i].getXPosition()
+            }
+        }
+    }
 
     panToNow(){
         const i = this.time.getiNow()
@@ -135,6 +144,18 @@ class GanttLayout{
             this.ganttColumns[i].clear()
             this.ganttColumns[i].setColumnWidth(this.columnWidths)
             this.ganttColumns[i].render()
+        }
+        for(let i = 0; i < this.ganttTasks.length; i++){
+            let newPositionX
+            if(this.ganttTasks[i].getBarXPosition()){
+                 newPositionX = this.ganttTasks[i].getBarXPosition() + (widthDelta * i)
+                 this.ganttTasks[i].setBarXPosition(newPositionX)
+            }
+            this.ganttTasks[i].clear()
+            
+            this.ganttTasks[i].setColumnWidths(this.columnWidths)
+            this.ganttTasks[i].render()
+
         }
     }
 

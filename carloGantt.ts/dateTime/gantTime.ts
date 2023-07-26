@@ -13,19 +13,19 @@ export class GantTime{
     private iNow : number | undefined
 
 
-    constructor(timeBuffer:number, timeUnit:"h"|"m"|"d"|"w"){
+    constructor(timeBuffer:number, renderSettings:renderSettings){
         const now = dayjs()
         this.timeDivisions = []
         this.iNow;
 
         for(let i = timeBuffer; i > 0; i--){
-            this.timeDivisions.push(now.subtract(i,timeUnit))
+            this.timeDivisions.push(now.subtract(i,renderSettings.timeUnit))
         }
         for(let i = 0; i < timeBuffer; i++){
             if(i == 0){
                 this.iNow = this.timeDivisions.length
             }
-            this.timeDivisions.push(now.add(i,timeUnit))
+            this.timeDivisions.push(now.add(i,renderSettings.timeUnit))
         }
     }
 
