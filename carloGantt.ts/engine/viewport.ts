@@ -44,12 +44,12 @@ export class Viewport extends Container{
                 
 
             }else{
-                console.log(this.viewMatrix) 
+                
                 this.viewMatrix.translate(-X, -Y)
                 this.viewMatrix.scale(factor, factor)
                 this.viewMatrix.translate(X, Y)
                 this.limitTranform()
-                console.log(this.viewMatrix)
+               
                 this.transform.setFromMatrix(this.viewMatrix)
             }
         }
@@ -58,8 +58,9 @@ export class Viewport extends Container{
     pan(xAmount:number, yAmount:number){
         this.viewMatrix.translate(xAmount,yAmount)
         this.limitTranform()
-        console.log(this.viewMatrix)
+        
         this.transform.setFromMatrix(this.viewMatrix)
+        console.log(this.viewMatrix)
 
     }
 
@@ -67,6 +68,10 @@ export class Viewport extends Container{
         const xAmount = -x - this.viewMatrix.tx
         const yAmount = -y - this.viewMatrix.ty 
         this.viewMatrix.translate(xAmount, yAmount)
+        this.limitTranform()
+        this.transform.setFromMatrix(this.viewMatrix)
+        console.log(this.viewMatrix)
+        
         
     }
 
@@ -99,7 +104,7 @@ export class Viewport extends Container{
 
     private limitTranform(){
         if(this.limits){
-            console.log(this.limits)
+           
             if ((this.limits.maxY || this.limits.maxY === 0) && (this.viewMatrix.ty > this.limits.maxY)){
                 this.viewMatrix.ty =  this.limits.maxY
             }
@@ -115,4 +120,10 @@ export class Viewport extends Container{
         }
         
     }
+
+    getViewMatix(){
+        return this.viewMatrix
+    }
+
+    
 }

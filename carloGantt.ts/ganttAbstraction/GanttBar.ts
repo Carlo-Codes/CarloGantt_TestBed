@@ -13,7 +13,6 @@ export default class GanttBar {
         this.positionY = null
         this.height = null
         this.width = null
-        
     }
 
     setBar(x:number, y:number, height:number, width:number){

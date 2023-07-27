@@ -36,6 +36,8 @@ class GanttLayout{
     private headingHeight:number
     private chartHeight:number
 
+    private targetColumn:GanttColumn|null
+
    
 
     
@@ -48,6 +50,8 @@ class GanttLayout{
         this.ganttViewPort = new Viewport()
         this.columnHeadingViewport = new Viewport()
         this.detailsPanelViewport = new Viewport()
+
+        this.targetColumn = null
 
         this.detailsPanelColour = rgb2hex([1,1,1])
 
@@ -69,7 +73,7 @@ class GanttLayout{
 
     generateColumns(){
         const columnsDivs = this.time.getDivisions()
-        console.log(columnsDivs)
+       
         for(let i = 0; i < columnsDivs.length; i++){
             const date = columnsDivs[i]
             const headingHeight = 20
@@ -123,10 +127,14 @@ class GanttLayout{
     panToNow(){
         const i = this.time.getiNow()
         if(i == undefined) return
-        const x = this.ganttColumns[i].getXPosition()
+        const x = this.ganttColumns[i].getXPosition() - this.taskDetailsWidth
+        this.targetColumn = this.ganttColumns[i]
         this.columnHeadingViewport.panTo(x,0)
-        this.ganttViewPort.panTo(x, 0)
+        this.ganttViewPort.panTo(x, 0) 
+    }
 
+    layoutPan(){
+        //new pan method inside GanttLayout so i can set the targetColumn from here -- start again here
     }
 
     addTasks(tasks:taskType[]){
@@ -135,6 +143,8 @@ class GanttLayout{
 
     zoomColumns(widthDelta:number){
         this.columnWidths += widthDelta
+        //const [xZeroColumn,xZeroColI] = this.getNearestColumnfromX(this.ganttViewPort.getViewMatix().tx)
+       
         
         for(let i = 0; i < this.ganttColumns.length; i++){
             const newPositionX = this.ganttColumns[i].getXPosition() + (widthDelta * i)
@@ -146,17 +156,43 @@ class GanttLayout{
             this.ganttColumns[i].render()
         }
         for(let i = 0; i < this.ganttTasks.length; i++){
-            let newPositionX
-            if(this.ganttTasks[i].getBarXPosition()){
-                 newPositionX = this.ganttTasks[i].getBarXPosition() + (widthDelta * i)
-                 this.ganttTasks[i].setBarXPosition(newPositionX)
-            }
+            const barStart = this.getXfromDate(this.ganttTasks[i].getTaskDetails().startDate,this.ganttColumns,this.timeMode)
             this.ganttTasks[i].clear()
-            
+            if(barStart){
+                this.ganttTasks[i].setBarXPosition(barStart)
+            }
             this.ganttTasks[i].setColumnWidths(this.columnWidths)
             this.ganttTasks[i].render()
 
         }
+        if(this.targetColumn){
+            
+            this.ganttViewPort.panTo(this.targetColumn.getXPosition() - this.taskDetailsWidth ,this.ganttViewPort.y)
+            this.columnHeadingViewport.panTo(this.targetColumn.getXPosition()- this.taskDetailsWidth, this.columnHeadingViewport.y)
+        }
+        console.log(this.targetColumn)
+    }
+
+    getNearestColumnfromX(x:number):[GanttColumn|null,number|null]{
+        const absX = Math.abs(x)
+        let nearestColumn : GanttColumn | null = null 
+        let distanceX : number | null = null
+        let colI : number | null = null
+        for(let i = 0; i < this.ganttColumns.length; i++){
+            if(!nearestColumn || !distanceX){
+                nearestColumn = this.ganttColumns[i]
+                distanceX = Math.abs(this.ganttColumns[i].getXPosition() - absX)
+                colI = i
+            }else{
+                const tempDistance = Math.abs(this.ganttColumns[i].getXPosition() - absX)
+                if(tempDistance < distanceX){
+                    distanceX = tempDistance
+                    nearestColumn = this.ganttColumns[i]
+                    colI = i
+                }
+            }
+        }
+        return [nearestColumn,colI]
     }
 
     getTasks(){

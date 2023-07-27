@@ -69,11 +69,13 @@ export default class GanttTask{
         this.columnWidth = columnWidth
         this.barSpan = barSpan
         this.barStartXPosition = barStart
-        console.log([barStart, barSpan, columnWidth])
+        
 
    
 
     }
+
+
 
     render(){
         this.detailsRect.lineStyle(this.lineWeight,this.lineColour)
@@ -84,12 +86,14 @@ export default class GanttTask{
         if(this.barStartXPosition && this.barSpan){
             const barWidth = this.barSpan * this.columnWidth
             this.bar.setBar(this.barStartXPosition,this.rowBodypositionY,this.rowHeight,barWidth)
-            console.log(this.barStartXPosition)
+            
         }
 
         this.rowRect.addChild(this.bar.getBar())
         this.detailsRect.addChild(this.detailsNameText)
     }
+
+
 
 
     getDetailsRect(){
@@ -121,5 +125,9 @@ export default class GanttTask{
         this.detailsRect.clear()
         this.bar.getBar().clear()
         this.rowRect.clear()
+    }
+
+    getTaskDetails(){
+        return this.task
     }
 }
