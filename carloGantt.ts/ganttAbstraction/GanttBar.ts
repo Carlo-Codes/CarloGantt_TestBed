@@ -16,12 +16,12 @@ export default class GanttBar {
     }
 
     setBar(x:number, y:number, height:number, width:number){
+        this.height = height/2
         this.positionX = x
-        this.positionY = y
-        this.height = height
+        this.positionY = y 
         this.width = width
         this.bar.beginFill(0x00FF00)
-        this.bar.drawRect(x,y,width,height)
+        this.bar.drawRect(this.positionX,this.positionY,this.width,this.height)
         
     }
 

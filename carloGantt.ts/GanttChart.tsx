@@ -87,9 +87,7 @@ function GanttChart(props:Props){
         const dx = new_mX - mX
         const dy = new_mY - mY
         
-        layout.getGanttViewport().pan(dx,dy)
-        layout.getColumnHeadingViewport().pan(dx,0)
-        layout.getDetailsPanelViewport().pan(0,dy)
+        layout.layoutPan(dx,dy)
         
         mY = new_mY
         mX = new_mX

@@ -25,7 +25,7 @@ const Settings:renderSettings = {
     timeBuffer:365,
     timeUnit:"d",
     nRows:100,
-    rowHeight:20,
+    rowHeight:50,
     columnWidth:100,
     backgroundColour:0x5BBA6F,
     gridLineColour:0x00FF00,

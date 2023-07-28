@@ -7,58 +7,54 @@ import { Graphics } from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
 import dayjs, { Dayjs } from 'dayjs'
 
-/* this is where the columns for the chart is layed out, the time is set and interactivity for zooming/changing time divisions in is handled */
+/* this is where everything for the chart is layed out,
+ the time is set and interactivity for zooming/changing time divisions in is handled */
 
 class GanttLayout{
     
+    //Time 
     private time : GantTime
+    private timeMode : dayjs.UnitTypeShort
     
-    private ganttViewPort : Viewport
+    //viewport layouts set out in 3 main panels
+    private ganttViewPort : Viewport 
     private columnHeadingViewport : Viewport
     private detailsPanelViewport : Viewport
 
-    private detailsPanelColour:number
-
-    private masterZoomTracking :number //0 - 100 to track how in or out the user has actuqally zoomed
-    private timeMode : dayjs.UnitTypeShort
-
+    //Columns - A custom class for rendering columns & headings
     private ganttColumns: GanttColumn[]
     private columnWidths : number
+    private headingHeight:number
     
+    //detailsPanel - parameters for rendering the details panel which is where details of the gant bar can be seen(name , startdate etc)
     private taskDetailsWidth : number
 
+    //tasks - Relating to the custom class fore rendering tasks and the gant bars
     private tasks ?: taskType[]
     private ganttTasks: GanttTask[]
     private rowHeights : number
     private rowWidths? : number
 
+    //styling 
+    private detailsPanelColour:number
 
-    private headingHeight:number
-    private chartHeight:number
-
-    private targetColumn:GanttColumn|null
-
-   
-
-    
+    //Top level Properties
+    private chartHeight:number //for setting where things should end etc
+    private targetColumn:GanttColumn|null //the column targeted by the user, the one on the very left or clicked on?
 
     constructor(renderSettings:renderSettings, tasks?:taskType[]){
+
         this.time = new GantTime(renderSettings.timeBuffer,renderSettings)
+
         this.ganttColumns = []
         this.ganttTasks = []
-    
         this.ganttViewPort = new Viewport()
         this.columnHeadingViewport = new Viewport()
         this.detailsPanelViewport = new Viewport()
-
         this.targetColumn = null
-
         this.detailsPanelColour = rgb2hex([1,1,1])
-
         this.headingHeight = 20
         this.chartHeight = 0
-
-        this.masterZoomTracking = 0
         this.timeMode = renderSettings.timeUnit
         this.columnWidths = renderSettings.columnWidth
         this.rowHeights = renderSettings.rowHeight
@@ -66,13 +62,13 @@ class GanttLayout{
         
         if(tasks){
             this.tasks = tasks
-            this.chartHeight = this.rowHeights * this.tasks.length + this.headingHeight
+            this.chartHeight = this.rowHeights * this.tasks.length + this.headingHeight //calculating chart height
         }
-
     }
-
-    generateColumns(){
-        const columnsDivs = this.time.getDivisions()
+ 
+    generateColumns(){ //this generates an array of columns bases on the time divisions specificed by gantTime in the constructor
+        //it then adds the graphics to the corresponding viewports
+        const columnsDivs = this.time.getDivisions() 
        
         for(let i = 0; i < columnsDivs.length; i++){
             const date = columnsDivs[i]
@@ -91,8 +87,8 @@ class GanttLayout{
         }
     }
 
-    generateTasks(){
-
+    generateTasks(){ //this generates an array of task instances based on the task data fed into the react component.
+   //it then adds the graphics to the corresponding viewports
         if(this.tasks){
         for(let i = 0; i < this.tasks.length; i++){
             const yPos = i * this.rowHeights + this.ganttColumns[0].getHeadingHeight()
@@ -107,16 +103,15 @@ class GanttLayout{
             this.detailsPanelViewport.addGraphics(tempTask.getDetailsRect())
             this.ganttViewPort.addGraphics(tempTask.getRowRect())
             tempTask.render()
-
             }   
         }
     }
 
-    generateDetailsPanel(){
+    generateDetailsPanel(){//this sets up the details panel
         this.detailsPanelViewport.generateBackroundPanel(0,0,this.chartHeight,this.taskDetailsWidth,this.detailsPanelColour)
     }
 
-    getXfromDate(date:Dayjs, columns:GanttColumn[], timeUnit:dayjs.UnitTypeShort){
+    getXfromDate(date:Dayjs, columns:GanttColumn[], timeUnit:dayjs.UnitTypeShort){ //this retrieves the x position of a column based on its date
         for(let i = 0; i < columns.length; i++){
             if(columns[i].getDayjs().isSame(date,timeUnit)){
                 return columns[i].getXPosition()
@@ -124,7 +119,7 @@ class GanttLayout{
         }
     }
 
-    panToNow(){
+    panToNow(){ //this pans the viewports to todays date
         const i = this.time.getiNow()
         if(i == undefined) return
         const x = this.ganttColumns[i].getXPosition() - this.taskDetailsWidth
@@ -133,20 +128,21 @@ class GanttLayout{
         this.ganttViewPort.panTo(x, 0) 
     }
 
-    layoutPan(){
-        //new pan method inside GanttLayout so i can set the targetColumn from here -- start again here
+    layoutPan(dx:number,dy:number){//this is used for mouse dragging,
+        //pan method inside GanttLayout so i can set the targetColumn from here
+        this.ganttViewPort.pan(dx,dy)
+        this.columnHeadingViewport.pan(dx,0)
+        this.detailsPanelViewport.pan(0,dy)
+
+        const [newTargetColumn, newTargetColumni] = this.getNearestColumnfromX(this.ganttViewPort.x - this.taskDetailsWidth)
+        this.targetColumn = newTargetColumn
     }
 
-    addTasks(tasks:taskType[]){
-        this.tasks?.concat(tasks)
-    } 
 
-    zoomColumns(widthDelta:number){
+    zoomColumns(widthDelta:number){ //This method "zooms" the chart by increasing the size of the columns 
         this.columnWidths += widthDelta
-        //const [xZeroColumn,xZeroColI] = this.getNearestColumnfromX(this.ganttViewPort.getViewMatix().tx)
-       
-        
-        for(let i = 0; i < this.ganttColumns.length; i++){
+
+        for(let i = 0; i < this.ganttColumns.length; i++){//looping through the columns, changing the width, clearing and re rendering
             const newPositionX = this.ganttColumns[i].getXPosition() + (widthDelta * i)
             if(i > 0){
                 this.ganttColumns[i].setXPosition(newPositionX)
@@ -155,7 +151,8 @@ class GanttLayout{
             this.ganttColumns[i].setColumnWidth(this.columnWidths)
             this.ganttColumns[i].render()
         }
-        for(let i = 0; i < this.ganttTasks.length; i++){
+
+        for(let i = 0; i < this.ganttTasks.length; i++){//looping through the tasks, clearing them and reRendering based on new colum widths and re rendering
             const barStart = this.getXfromDate(this.ganttTasks[i].getTaskDetails().startDate,this.ganttColumns,this.timeMode)
             this.ganttTasks[i].clear()
             if(barStart){
@@ -165,15 +162,15 @@ class GanttLayout{
             this.ganttTasks[i].render()
 
         }
-        if(this.targetColumn){
+
+        if(this.targetColumn){ //panning the view ports back to the target column
             
             this.ganttViewPort.panTo(this.targetColumn.getXPosition() - this.taskDetailsWidth ,this.ganttViewPort.y)
-            this.columnHeadingViewport.panTo(this.targetColumn.getXPosition()- this.taskDetailsWidth, this.columnHeadingViewport.y)
+            this.columnHeadingViewport.panTo(this.targetColumn.getXPosition() - this.taskDetailsWidth, this.columnHeadingViewport.y)
         }
-        console.log(this.targetColumn)
     }
 
-    getNearestColumnfromX(x:number):[GanttColumn|null,number|null]{
+    getNearestColumnfromX(x:number):[GanttColumn|null,number|null]{ // returning the column and its index in the column arry of which its x position is closest to the x value supplied
         const absX = Math.abs(x)
         let nearestColumn : GanttColumn | null = null 
         let distanceX : number | null = null
@@ -195,10 +192,16 @@ class GanttLayout{
         return [nearestColumn,colI]
     }
 
+
+    //getters and setters
+
     getTasks(){
         return this.ganttTasks
     }
 
+    addTasks(tasks:taskType[]){ 
+        this.tasks?.concat(tasks)
+    } 
 
     getGanttViewport(){
         return this.ganttViewPort

@@ -31,7 +31,7 @@ export class Viewport extends Container{
         this.addChildAt(this.backgroundRect,0)
     }
 
-    zoom(factor:number, X:number, Y:number){
+    zoom(factor:number, X:number, Y:number){//not used
         if(this.limits){
             if((this.limits.minScale || this.limits.minScale === 0) && (this.viewMatrix.a * factor < this.limits.minScale)){
                 this.viewMatrix.a = this.limits.minScale
