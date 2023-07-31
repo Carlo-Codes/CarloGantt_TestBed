@@ -83,10 +83,11 @@ export default class GanttTask{
         this.rowRect.lineStyle(this.lineWeight, this.lineColour)
         this.rowRect.drawRect(this.rowBodyPositionX, this.rowBodypositionY, this.rowWidth, this.rowHeight)
 
+        
+
         if(this.barStartXPosition && this.barSpan){
             const barWidth = this.barSpan * this.columnWidth
             this.bar.setBar(this.barStartXPosition,this.rowBodypositionY,this.rowHeight,barWidth)
-            
         }
 
         this.rowRect.addChild(this.bar.getBar())
