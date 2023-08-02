@@ -1,9 +1,9 @@
-import { Graphics, FederatedPointerEvent,Rectangle,Sprite,Container} from "pixijs";
+import { Graphics, FederatedPointerEvent,Rectangle,Sprite,Container,Texture} from "pixijs";
 
 
 export default class GanttBar {
     private bar: Graphics
-    private arrows:Container
+    
     private leftArrow:Sprite
     private rightArrow:Sprite
 
@@ -14,15 +14,21 @@ export default class GanttBar {
     
 
     constructor(){
+        
         this.bar = new Graphics()
-        this.arrows = new Container()
-        this.rightArrow = Sprite.from("carloGantt.ts/Assets/Arrow.png")
+        
+        const arrowTexture = Texture.from("carloGantt.ts/Assets/Arrow.png")
+        this.rightArrow = new Sprite(arrowTexture)
         this.rightArrow.anchor.set(0.5,0.5)
-        this.leftArrow = Sprite.from("carloGantt.ts/Assets/Arrow.png")
+        this.leftArrow = new Sprite(arrowTexture)
         this.leftArrow.anchor.set(0.5,0.5)
+        
+        
+
         this.leftArrow.rotation = 3
-        this.rightArrow.scale.set(0.05,0.05)
-        this.leftArrow.scale.set(0.05,0.05)
+       this.rightArrow.scale.set(0.05,0.05)
+       this.leftArrow.scale.set(0.05,0.05)
+
 
         this.positionX = null
         this.positionY = null
@@ -32,19 +38,24 @@ export default class GanttBar {
         this.bar.interactive = true
         
         this.leftArrow.interactive = true
+        
         this.rightArrow.interactive = true
-        this.bar.onmouseover = this.onBarOver.bind(this)
-        this.bar.onmouseleave = this.onBarLeave.bind(this)
 
-        this.arrows.onmouseover = this.onArrowOver.bind(this)
-        this.arrows.onmouseleave = this.onArrowleave.bind(this)
+        this.bar.on('mouseover',this.onBarOver.bind(this))
+        this.bar.on('mouseleave', this.onBarLeave.bind(this))
 
-        this.arrows.addChild(this.rightArrow,this.leftArrow)
+        this.leftArrow.on('mouseover', this.onArrowOver)
+        this.rightArrow.on('mouseover', this.onArrowOver)
+
+        
+        
+        
+        
+        
         
 
-        this.bar.addChild(this.arrows)
-
-        this.arrows.alpha = 0
+        this.leftArrow.alpha = 0
+        this.rightArrow.alpha = 0
     }
 
     setBar(x:number, y:number, height:number, width:number){
@@ -55,18 +66,14 @@ export default class GanttBar {
 
         this.bar.beginFill(0x00FF00)
         this.bar.drawRect(this.positionX,this.positionY,this.width,this.height)
-        this.bar.hitArea = new Rectangle(this.positionX,this.positionY,this.width,this.height).pad(15)
-        
+        //this.bar.hitArea = new Rectangle(this.positionX,this.positionY,this.width,this.height).pad(15)
         
         this.leftArrow.x = this.positionX
         this.leftArrow.y = y + (height/2)
         this.rightArrow.x = this.positionX + this.width
         this.rightArrow.y = y + (height/2)
-
-        this.leftArrow.hitArea = this.leftArrow.getBounds().pad(15)
-        this.rightArrow.hitArea = this.rightArrow.getBounds().pad(15)
-        console.log(this.leftArrow.hitArea)
-       
+        
+        this.bar.addChild(this.leftArrow,this.rightArrow)
         //possible probems with order of hit areas and children etc
 
     }
@@ -76,27 +83,20 @@ export default class GanttBar {
     }
 
     onBarOver(e:FederatedPointerEvent){
-        this.arrows.alpha = 1
+        this.leftArrow.alpha = 1
+        this.rightArrow.alpha = 1
+        
     }
 
     onBarLeave(e:FederatedPointerEvent){
-        this.arrows.alpha = 0
+        this.leftArrow.alpha = 0
+        this.rightArrow.alpha = 0
     }
 
     onArrowOver(e:FederatedPointerEvent){
         console.log("fire")
-        const body = document.getElementById('body')
-        if(body){
-            body.style.cursor = 'col-resize'
-        }
-        console.log("fire")
     }
     onArrowleave(e:FederatedPointerEvent){
-        console.log("fire")
-        const body = document.getElementById('body')
-        if(body){
-            body.style.cursor = 'pointer'
-        }
         console.log("fire")
     }
 
