@@ -109,7 +109,7 @@ export default class GanttBar {
     }
 
     onArrowDragStart(){
-        console.log("fire")
+        console.log(this)
     }
     onArrowDragEnd(){
         console.log("fire")

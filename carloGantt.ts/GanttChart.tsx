@@ -63,7 +63,7 @@ function GanttChart(props:Props){
     console.log("details panel" + layout.getDetailsPanelViewport().getBounds()) */
 
 
-    
+    /* ALL THIS EVENT HANDLING NEEDS TO GO INTO THE REPECTIVE CLASSES */
     const handleMouseDown = (e:MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
