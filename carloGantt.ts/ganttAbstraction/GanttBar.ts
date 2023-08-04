@@ -48,12 +48,18 @@ export default class GanttBar {
         this.leftArrow.on('mouseleave', this.onArrowleave)
         this.rightArrow.on('mouseleave', this.onArrowleave)
 
+        this.leftArrow.on('pointerdown', this.onArrowDragStart)
+        this.rightArrow.on('pointerdown', this.onArrowDragStart)
+        this.leftArrow.on('pointerup', this.onArrowDragEnd)
+        this.rightArrow.on('pointerup', this.onArrowDragEnd)
+
         this.leftArrow.alpha = 0
         this.rightArrow.alpha = 0
         
 
 
     }
+
 
     setBar(x:number, y:number, height:number, width:number){
         this.height = height/2
@@ -100,6 +106,17 @@ export default class GanttBar {
         if(root){
             root.style.cursor = "default"
         }
+    }
+
+    onArrowDragStart(){
+        console.log("fire")
+    }
+    onArrowDragEnd(){
+        console.log("fire")
+    }
+
+    onArrowDrag(){
+        null
     }
 
 
