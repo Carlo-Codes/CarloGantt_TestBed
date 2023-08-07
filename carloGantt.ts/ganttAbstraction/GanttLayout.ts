@@ -3,9 +3,10 @@ import { renderSettings, taskType } from '../types/generalTypes'
 import GanttColumn from './GanttColumns'
 import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
-import { Graphics } from 'pixijs'
+import {FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
 import dayjs, { Dayjs } from 'dayjs'
+
 
 /* this is where everything for the chart is layed out,
  the time is set and interactivity for zooming/changing time divisions in is handled */
@@ -38,6 +39,12 @@ class GanttLayout{
     //styling 
     private detailsPanelColour:number
 
+    //Event Trackers
+
+    private mouseDown = false
+    private mX = 0
+    private mY = 0
+
     //Top level Properties
     private chartHeight:number //for setting where things should end etc
     private targetColumn:GanttColumn|null //the column targeted by the user, the one on the very left or clicked on?
@@ -59,6 +66,15 @@ class GanttLayout{
         this.columnWidths = renderSettings.columnWidth
         this.rowHeights = renderSettings.rowHeight
         this.taskDetailsWidth = renderSettings.taskDetailsWidth
+
+        //event Handeling
+        this.ganttViewPort.on("pointerout",this.handleMouseUp)
+        this.ganttViewPort.on("pointerup", this.handleMouseUp)
+        this.ganttViewPort.on("pointerdown", this.handleMouseDown)
+        this.ganttViewPort.on("pointermove", this.handleMouseMove)
+        this.ganttViewPort.on("wheel", this.handleMouseWheel)
+
+
         
         if(tasks){
             this.tasks = tasks
@@ -192,6 +208,42 @@ class GanttLayout{
         return [nearestColumn,colI]
     }
 
+    //eventHandleing//
+    handleMouseDown(e:FederatedPointerEvent){
+        e.preventDefault();
+        e.stopPropagation();
+        this.mouseDown = true
+        this.mX = e.clientX
+        this.mY = e.clientY 
+    }
+
+    handleMouseUp(e:FederatedPointerEvent){
+        e.preventDefault();
+        e.stopPropagation();
+        this.mouseDown = false
+    }
+
+    handleMouseMove(e:FederatedPointerEvent){
+        if(!this.mouseDown) return 
+        e.preventDefault();
+        e.stopPropagation();
+        const new_mX = e.clientX
+        const new_mY = e.clientY
+        const dx = new_mX - this.mX
+        const dy = new_mY - this.mY
+        
+        this.layoutPan(dx,dy)
+        
+        this.mY = new_mY
+        this.mX = new_mX
+    }   
+
+    handleMouseWheel(e:FederatedWheelEvent){
+        e.preventDefault();
+        e.stopPropagation();
+        //const factor = 1 + (-e.deltaY * 0.001) this is from when we were able to actually zoom in not needed.
+        this.zoomColumns(e.deltaY/10)
+    }
 
     //getters and setters
 
