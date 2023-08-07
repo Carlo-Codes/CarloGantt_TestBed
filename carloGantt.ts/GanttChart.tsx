@@ -26,22 +26,15 @@ function GanttChart(props:Props){
 
     const pixiRef = React.useRef(null)
 
-
-
-    
-    const app = new Application<HTMLCanvasElement>({
-        width:props.renderSettings.canvasWidth,
-        height:props.renderSettings.canvasHeight,
-        backgroundColor: props.renderSettings.backgroundColour,
-    })
-
-
-    
     const layout = new GanttLayout(props.renderSettings,props.tasks)
     layout.getGanttViewport().setLimits({})
     layout.generateDetailsPanel()
     layout.generateColumns()
     layout.generateTasks()
+
+    layout.bindEventHandlers()
+
+    
     
   
 
@@ -53,6 +46,7 @@ function GanttChart(props:Props){
     layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
 
     layout.panToNow()
+
     
     
 /* 
@@ -64,22 +58,18 @@ function GanttChart(props:Props){
     /* ALL THIS EVENT HANDLING NEEDS TO GO INTO THE REsPECTIVE CLASSES */
 
 
-    const draw = ()=>{
-            app.stage.addChild(layout.getGanttViewport())
-            app.stage.addChild(layout.getColumnHeadingViewport())
-            app.stage.addChild(layout.getDetailsPanelViewport())
-        }
 
     useEffect(()=>{ 
         if(pixiRef.current){
             const pixiElemet:HTMLDivElement = pixiRef.current
-            pixiElemet.appendChild(app.view)
-            draw()
-            app.start()
+            pixiElemet.appendChild(layout.getGantChart().view)
+            
+            layout.getGantChart().start()
+            
 
         } 
         return () => {
-            app.stop() 
+            layout.getGantChart().stop() 
             
         }
     },[])

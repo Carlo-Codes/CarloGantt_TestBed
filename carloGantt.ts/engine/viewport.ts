@@ -21,6 +21,7 @@ export class Viewport extends Container{
             minScale:null,
             maxScale:null,
         }
+        this.interactive = true
         
 
     }

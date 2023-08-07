@@ -69,7 +69,7 @@ export default class GanttTask{
         this.columnWidth = columnWidth
         this.barSpan = barSpan
         this.barStartXPosition = barStart
-        
+        this.detailsRect.interactive = true
 
    
 

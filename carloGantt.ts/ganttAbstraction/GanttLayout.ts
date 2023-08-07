@@ -3,7 +3,7 @@ import { renderSettings, taskType } from '../types/generalTypes'
 import GanttColumn from './GanttColumns'
 import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
-import {FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
+import {Application, FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
 import dayjs, { Dayjs } from 'dayjs'
 
@@ -12,6 +12,8 @@ import dayjs, { Dayjs } from 'dayjs'
  the time is set and interactivity for zooming/changing time divisions in is handled */
 
 class GanttLayout{
+
+    private ganttChart : Application<HTMLCanvasElement>
     
     //Time 
     private time : GantTime
@@ -53,6 +55,14 @@ class GanttLayout{
 
         this.time = new GantTime(renderSettings.timeBuffer,renderSettings)
 
+        this.ganttChart = new Application<HTMLCanvasElement>({
+            width:renderSettings.canvasWidth,
+            height:renderSettings.canvasHeight,
+            backgroundColor: renderSettings.backgroundColour,
+        })
+
+       /*  globalThis.__PIXI_APP__ =  this.ganttChart; */
+
         this.ganttColumns = []
         this.ganttTasks = []
         this.ganttViewPort = new Viewport()
@@ -67,14 +77,17 @@ class GanttLayout{
         this.rowHeights = renderSettings.rowHeight
         this.taskDetailsWidth = renderSettings.taskDetailsWidth
 
-        //event Handeling
-        this.ganttViewPort.on("pointerout",this.handleMouseUp)
-        this.ganttViewPort.on("pointerup", this.handleMouseUp)
-        this.ganttViewPort.on("pointerdown", this.handleMouseDown)
-        this.ganttViewPort.on("pointermove", this.handleMouseMove)
-        this.ganttViewPort.on("wheel", this.handleMouseWheel)
+        this.ganttViewPort.on("mouseout",this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("mouseup", this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("mousedown", this.handleMouseDown.bind(this))
+        this.ganttViewPort.on("mousemove", this.handleMouseMove.bind(this))
+        this.ganttViewPort.on("wheel", this.handleMouseWheel.bind(this))
+        
 
-
+        this.ganttChart.stage.addChild(this.ganttViewPort)
+        this.ganttChart.stage.addChild(this.columnHeadingViewport)
+        this.ganttChart.stage.addChild(this.detailsPanelViewport)
+        
         
         if(tasks){
             this.tasks = tasks
@@ -96,6 +109,7 @@ class GanttLayout{
             }
             const column = new GanttColumn(date,headingHeight,xPos,0,this.columnWidths,height)
             column.render()
+            column.getColumnRect().interactive = true
             
             this.ganttColumns.push(column)
             this.ganttViewPort.addGraphics(column.getColumnRect())
@@ -113,7 +127,7 @@ class GanttLayout{
             const barStart = this.getXfromDate(this.tasks[i].startDate,this.ganttColumns,this.timeMode)
             const barSpan = this.tasks[i].endDate.diff(this.tasks[i].startDate,this.timeMode)
             const tempTask = new GanttTask(this.tasks[i],xPos,yPos,this.rowHeights,rowWidth,this.rowHeights,this.taskDetailsWidth,this.columnWidths,barStart,barSpan,this.timeMode)
-            
+            tempTask.getRowRect().interactive = true
             this.ganttTasks.push(tempTask)
 
             this.detailsPanelViewport.addGraphics(tempTask.getDetailsRect())
@@ -125,6 +139,26 @@ class GanttLayout{
 
     generateDetailsPanel(){//this sets up the details panel
         this.detailsPanelViewport.generateBackroundPanel(0,0,this.chartHeight,this.taskDetailsWidth,this.detailsPanelColour)
+    }
+
+    bindEventHandlers(){
+        //event Handeling
+        
+        this.ganttViewPort.on("mouseout",this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("mouseup", this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("mousedown", this.handleMouseDown.bind(this))
+        this.ganttViewPort.on("mousemove", this.handleMouseMove.bind(this))
+        this.ganttViewPort.on("wheel", this.handleMouseWheel.bind(this))
+
+        //tests//
+        const bounds = this.ganttViewPort.getBounds()
+/*         const x = bounds.x
+        const y = bounds.y
+        const widht = bounds.width
+        const height = bounds.height */
+        console.log("bounds = \n" + bounds)
+
+
     }
 
     getXfromDate(date:Dayjs, columns:GanttColumn[], timeUnit:dayjs.UnitTypeShort){ //this retrieves the x position of a column based on its date
@@ -210,23 +244,22 @@ class GanttLayout{
 
     //eventHandleing//
     handleMouseDown(e:FederatedPointerEvent){
-        e.preventDefault();
-        e.stopPropagation();
         this.mouseDown = true
         this.mX = e.clientX
         this.mY = e.clientY 
+        console.log("handleMouseDown fired")
     }
 
     handleMouseUp(e:FederatedPointerEvent){
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
         this.mouseDown = false
+        console.log("handleMouseUp fired")
     }
 
     handleMouseMove(e:FederatedPointerEvent){
+        e.preventDefault()
+        console.log("handleMouseMove fired")
         if(!this.mouseDown) return 
-        e.preventDefault();
-        e.stopPropagation();
         const new_mX = e.clientX
         const new_mY = e.clientY
         const dx = new_mX - this.mX
@@ -236,11 +269,11 @@ class GanttLayout{
         
         this.mY = new_mY
         this.mX = new_mX
+        
     }   
 
     handleMouseWheel(e:FederatedWheelEvent){
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
         //const factor = 1 + (-e.deltaY * 0.001) this is from when we were able to actually zoom in not needed.
         this.zoomColumns(e.deltaY/10)
     }
@@ -273,6 +306,10 @@ class GanttLayout{
 
     setDetailsPanelWidth(width:number){
         this.taskDetailsWidth = width
+    }
+
+    getGantChart(){
+        return this.ganttChart
     }
 }
 

@@ -85,23 +85,27 @@ export default class GanttBar {
     }
 
     onBarOver(e:FederatedPointerEvent){
+        e.stopPropagation()
         this.leftArrow.alpha = 1
         this.rightArrow.alpha = 1
         
     }
 
     onBarLeave(e:FederatedPointerEvent){
+        e.stopPropagation()
         this.leftArrow.alpha = 0
         this.rightArrow.alpha = 0
 
     }
 
     onArrowOver(e:FederatedPointerEvent){
+        e.stopPropagation()
         if(root){
             root.style.cursor = "col-resize"
         }
     }
     onArrowleave(e:FederatedPointerEvent){
+        e.stopPropagation()
         console.log("fired")
         if(root){
             root.style.cursor = "default"
@@ -109,6 +113,7 @@ export default class GanttBar {
     }
 
     onArrowDragStart(){
+        
         console.log(this)
     }
     onArrowDragEnd(){
