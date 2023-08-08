@@ -42,6 +42,7 @@ export default class GanttBar {
 
         this.bar.on('mouseover',this.onBarOver.bind(this))
         this.bar.on('mouseleave', this.onBarLeave.bind(this))
+        
 
         this.leftArrow.on('mouseover', this.onArrowOver)
         this.rightArrow.on('mouseover', this.onArrowOver)

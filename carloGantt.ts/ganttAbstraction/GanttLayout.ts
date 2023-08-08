@@ -61,7 +61,7 @@ class GanttLayout{
             backgroundColor: renderSettings.backgroundColour,
         })
 
-       /*  globalThis.__PIXI_APP__ =  this.ganttChart; */
+        //globalThis.__PIXI_APP__ =  this.ganttChart;
 
         this.ganttColumns = []
         this.ganttTasks = []
@@ -82,11 +82,9 @@ class GanttLayout{
         this.ganttViewPort.on("mousedown", this.handleMouseDown.bind(this))
         this.ganttViewPort.on("mousemove", this.handleMouseMove.bind(this))
         this.ganttViewPort.on("wheel", this.handleMouseWheel.bind(this))
-        
 
-        this.ganttChart.stage.addChild(this.ganttViewPort)
-        this.ganttChart.stage.addChild(this.columnHeadingViewport)
-        this.ganttChart.stage.addChild(this.detailsPanelViewport)
+
+        
         
         
         if(tasks){
@@ -284,6 +282,10 @@ class GanttLayout{
         return this.ganttTasks
     }
 
+    getColumns(){
+        return  this.ganttColumns
+    }
+
     addTasks(tasks:taskType[]){ 
         this.tasks?.concat(tasks)
     } 
@@ -310,6 +312,24 @@ class GanttLayout{
 
     getGantChart(){
         return this.ganttChart
+    }
+    
+    init(){
+        //initialising
+        this.ganttViewPort.setLimits({})
+        this.generateDetailsPanel()
+        this.generateColumns()
+        this.generateTasks()
+        this.bindEventHandlers()
+        this.getGanttViewport().generateInteractionRect(0)
+        
+    }
+
+    draw(){
+        
+        this.ganttChart.stage.addChild(this.ganttViewPort)
+        this.ganttChart.stage.addChild(this.columnHeadingViewport)
+        this.ganttChart.stage.addChild(this.detailsPanelViewport)
     }
 }
 

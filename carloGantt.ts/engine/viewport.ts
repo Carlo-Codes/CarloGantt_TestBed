@@ -1,5 +1,6 @@
 import { Container, Graphics, Matrix, ColorMatrixFilter } from "pixijs";
 import {viewPortLimits} from "../types/pixiJsTypes"
+import { rgb2hex } from "pixijs/utils";
 
 
 
@@ -8,9 +9,11 @@ export class Viewport extends Container{
     private viewMatrix : Matrix
     private limits : viewPortLimits | null
     private backgroundRect : Graphics
+    private interactionRect : Graphics
     constructor(matrix:Matrix = new Matrix(1, 0, 0, 1, 0, 0)){
         super()
         this.backgroundRect = new Graphics()
+        this.interactionRect = new Graphics()
         this.viewMatrix = matrix
         
         this.limits = {
@@ -30,6 +33,18 @@ export class Viewport extends Container{
         this.backgroundRect.beginFill(colour)
         this.backgroundRect.drawRect(x,y, w, h)
         this.addChildAt(this.backgroundRect,0)
+    }
+
+    generateInteractionRect(zIndex:number){ //for use with interaction event listeners
+        const bounds = this.getBounds()
+        const rectx = bounds.x
+        const recty = bounds.y
+        const rectH = bounds.height
+        const rectW = bounds.width
+        this.backgroundRect.beginFill(rgb2hex([1,1,1]))
+        this.backgroundRect.drawRect(rectx,recty, rectW, rectH)
+        this.backgroundRect.alpha = 0
+        this.addChildAt(this.backgroundRect,zIndex)
     }
 
     zoom(factor:number, X:number, Y:number){//not used

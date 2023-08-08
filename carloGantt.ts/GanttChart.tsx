@@ -1,7 +1,7 @@
 import React, {FunctionComponent, MouseEventHandler, WheelEventHandler, useEffect} from 'react'
 import "./GantChart.css"
 import { renderSettings, taskType } from './types/generalTypes'
-import { Application, FederatedPointerEvent, FederatedWheelEvent } from 'pixijs'
+import { Application,Graphics, FederatedPointerEvent, FederatedWheelEvent } from 'pixijs'
 import GanttLayout from './ganttAbstraction/GanttLayout'
 import dayjs from 'dayjs'
 import { rgb2hex } from 'pixijs/utils'
@@ -27,28 +27,30 @@ function GanttChart(props:Props){
     const pixiRef = React.useRef(null)
 
     const layout = new GanttLayout(props.renderSettings,props.tasks)
-    layout.getGanttViewport().setLimits({})
-    layout.generateDetailsPanel()
-    layout.generateColumns()
-    layout.generateTasks()
-
-    layout.bindEventHandlers()
+    layout.init()
+    const columnHeadingBackgroundColour = rgb2hex([20,50,60,0])
+    const taskdetailsBackgroundColour = rgb2hex([233,0,100])
+    const ganttBackgroundColour = rgb2hex([200,255,0])
+    const detailsPanelBackgroundColour = rgb2hex([200,200,200])
+    layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
+    layout.panToNow()
+  
 
     
     
   
 
-    const columnHeadingBackgroundColour = rgb2hex([20,50,60,0])
-    const taskdetailsBackgroundColour = rgb2hex([233,0,100])
-    const ganttBackgroundColour = rgb2hex([200,255,0])
-    const detailsPanelBackgroundColour = rgb2hex([200,200,200])
 
-    layout.getColumnHeadingViewport().addBackgroundColour(columnHeadingBackgroundColour,100)
-
-    layout.panToNow()
 
     
     
+
+    
+
+
+    
+       
+
 /* 
     console.log("heading layout = " + layout.getColumnHeadingViewport().getBounds())
     console.log(" gant layout"+ layout.getGanttViewport().getBounds())
@@ -63,7 +65,7 @@ function GanttChart(props:Props){
         if(pixiRef.current){
             const pixiElemet:HTMLDivElement = pixiRef.current
             pixiElemet.appendChild(layout.getGantChart().view)
-            
+            layout.draw()
             layout.getGantChart().start()
             
 
