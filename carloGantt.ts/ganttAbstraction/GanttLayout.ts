@@ -242,21 +242,30 @@ class GanttLayout{
 
     //eventHandleing//
     handleMouseDown(e:FederatedPointerEvent){
-        this.mouseDown = true
-        this.mX = e.clientX
-        this.mY = e.clientY 
-        console.log("handleMouseDown fired")
+        
+        
+        e.stopPropagation()
+        if(e.currentTarget === e.currentTarget){
+            console.log(e.currentTarget)
+            console.log(e.target)
+            this.mouseDown = true
+            this.mX = e.clientX
+            this.mY = e.clientY 
+        }
+
+        //console.log("handleMouseDown fired")
     }
 
     handleMouseUp(e:FederatedPointerEvent){
         e.preventDefault()
         this.mouseDown = false
-        console.log("handleMouseUp fired")
+        //console.log("handleMouseUp fired")
     }
 
     handleMouseMove(e:FederatedPointerEvent){
+        e.stopPropagation()
         e.preventDefault()
-        console.log("handleMouseMove fired")
+        //console.log("handleMouseMove fired")
         if(!this.mouseDown) return 
         const new_mX = e.clientX
         const new_mY = e.clientY
