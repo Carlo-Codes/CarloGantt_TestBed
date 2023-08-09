@@ -76,16 +76,6 @@ class GanttLayout{
         this.columnWidths = renderSettings.columnWidth
         this.rowHeights = renderSettings.rowHeight
         this.taskDetailsWidth = renderSettings.taskDetailsWidth
-
-        this.ganttViewPort.on("mouseout",this.handleMouseUp.bind(this))
-        this.ganttViewPort.on("mouseup", this.handleMouseUp.bind(this))
-        this.ganttViewPort.on("mousedown", this.handleMouseDown.bind(this))
-        this.ganttViewPort.on("mousemove", this.handleMouseMove.bind(this))
-        this.ganttViewPort.on("wheel", this.handleMouseWheel.bind(this))
-
-
-        
-        
         
         if(tasks){
             this.tasks = tasks
@@ -142,10 +132,10 @@ class GanttLayout{
     bindEventHandlers(){
         //event Handeling
         
-        this.ganttViewPort.on("mouseout",this.handleMouseUp.bind(this))
-        this.ganttViewPort.on("mouseup", this.handleMouseUp.bind(this))
-        this.ganttViewPort.on("mousedown", this.handleMouseDown.bind(this))
-        this.ganttViewPort.on("mousemove", this.handleMouseMove.bind(this))
+        //this.ganttViewPort.on("pointerout",this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("pointerup", this.handleMouseUp.bind(this))
+        this.ganttViewPort.on("pointerdown", this.handleMouseDown.bind(this))
+        this.ganttViewPort.on("pointermove", this.handleMouseMove.bind(this))
         this.ganttViewPort.on("wheel", this.handleMouseWheel.bind(this))
 
         //tests//
@@ -241,31 +231,49 @@ class GanttLayout{
     }
 
     //eventHandleing//
-    handleMouseDown(e:FederatedPointerEvent){
-        
-        
+    handleMouseDown(e:FederatedPointerEvent){ 
         e.stopPropagation()
-        if(e.currentTarget === e.currentTarget){
-            console.log(e.currentTarget)
-            console.log(e.target)
-            this.mouseDown = true
-            this.mX = e.clientX
-            this.mY = e.clientY 
-        }
-
+        this.mouseDown = true
+        this.mX = e.clientX
+        this.mY = e.clientY 
         //console.log("handleMouseDown fired")
     }
 
     handleMouseUp(e:FederatedPointerEvent){
         e.preventDefault()
         this.mouseDown = false
+        for(let i = 0; i < this.ganttTasks.length;i++){ //handleing cancel dragging while off the bar
+            if(this.ganttTasks[i].getGanttBar().rightArrowIsDragging||this.ganttTasks[i].getGanttBar().leftArrowIsDragging){
+                console.log(i)
+                this.ganttTasks[i].getGanttBar().stopArrowDragging()
+            }
+        }
         //console.log("handleMouseUp fired")
     }
 
     handleMouseMove(e:FederatedPointerEvent){
-        e.stopPropagation()
+       
         e.preventDefault()
         //console.log("handleMouseMove fired")
+
+        for(let i = 0; i < this.ganttTasks.length;i++){ //handleing dragging while off the bar
+            if(this.ganttTasks[i].getGanttBar().rightArrowIsDragging){
+                console.log(e.x)
+            }
+            else if(this.ganttTasks[i].getGanttBar().leftArrowIsDragging){
+                
+                const viewport = e.currentTarget as Viewport
+                const x = viewport.getViewMatix().tx - e.x
+                const [col,j] = this.getNearestColumnfromX(x)
+                console.log(col)
+                if(col){
+                    this.ganttTasks[i].getGanttBar().setBarStart(col.getXPosition())
+                }
+
+
+            }
+        }
+
         if(!this.mouseDown) return 
         const new_mX = e.clientX
         const new_mY = e.clientY
@@ -282,7 +290,7 @@ class GanttLayout{
     handleMouseWheel(e:FederatedWheelEvent){
         e.preventDefault()
         //const factor = 1 + (-e.deltaY * 0.001) this is from when we were able to actually zoom in not needed.
-        this.zoomColumns(e.deltaY/10)
+        this.zoomColumns(e.deltaY/100)
     }
 
     //getters and setters

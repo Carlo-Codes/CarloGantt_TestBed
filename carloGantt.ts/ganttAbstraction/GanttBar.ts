@@ -12,6 +12,10 @@ export default class GanttBar {
     private positionY: number | null
     private height: number | null
     private width: number | null
+
+    public rightArrowIsDragging = false
+    public leftArrowIsDragging = false
+    private cursorOnBar = false
     
 
     constructor(){
@@ -48,22 +52,27 @@ export default class GanttBar {
         })
         
 
-        this.leftArrow.on('mouseover', this.onArrowOver)
-        this.rightArrow.on('mouseover', this.onArrowOver)
-        this.leftArrow.on('mouseleave', this.onArrowleave)
-        this.rightArrow.on('mouseleave', this.onArrowleave)
+        this.leftArrow.on('mouseover', this.onArrowOver.bind(this))
+        this.rightArrow.on('mouseover', this.onArrowOver.bind(this))
+        this.leftArrow.on('mouseleave', this.onArrowleave.bind(this))
+        this.rightArrow.on('mouseleave', this.onArrowleave.bind(this))
 
-        this.leftArrow.on('pointerdown', this.onArrowDragStart)
-        this.rightArrow.on('pointerdown', this.onArrowDragStart)
-        this.leftArrow.on('pointerup', this.onArrowDragEnd)
-        this.rightArrow.on('pointerup', this.onArrowDragEnd)
+        this.leftArrow.on('pointerdown', this.onLeftArrowDragStart.bind(this))
+        this.rightArrow.on('pointerdown', this.onRightArrowDragStart.bind(this))
+
+        //for leaving the bar or arrows after clicking
+        this.leftArrow.on('pointerup', this.onArrowDragEnd.bind(this))
+        this.rightArrow.on('pointerup', this.onArrowDragEnd.bind(this))
+        this.bar.on('pointerup',this.onArrowDragEnd.bind(this))
 
         this.leftArrow.alpha = 0
         this.rightArrow.alpha = 0
         
+        
 
 
     }
+    
 
 
     setBar(x:number, y:number, height:number, width:number){
@@ -81,7 +90,6 @@ export default class GanttBar {
         this.rightArrow.y = y + (height/2)
         
         this.bar.addChild(this.leftArrow,this.rightArrow)
-    
 
     }
 
@@ -100,34 +108,61 @@ export default class GanttBar {
         e.stopPropagation()
         this.leftArrow.alpha = 0
         this.rightArrow.alpha = 0
-
+        
     }
 
     onArrowOver(e:FederatedPointerEvent){
-        e.stopPropagation()
         if(root){
             root.style.cursor = "col-resize"
         }
     }
+
     onArrowleave(e:FederatedPointerEvent){
         e.stopPropagation()
-        console.log("fired")
         if(root){
             root.style.cursor = "default"
         }
     }
 
-    onArrowDragStart(){
+    onRightArrowDragStart(e:FederatedPointerEvent){
+        e.stopPropagation()
+        this.rightArrowIsDragging = true
+        this.bar.alpha = 0.5
         
-        console.log(this)
     }
-    onArrowDragEnd(){
-        console.log("fire")
+
+    onLeftArrowDragStart(e:FederatedPointerEvent){
+        e.stopPropagation()
+        this.leftArrowIsDragging = true
+        this.bar.alpha = 0.5
+        
+    }
+
+    onArrowDragEnd(e:FederatedPointerEvent){
+    
+        if(this.rightArrowIsDragging || this.leftArrowIsDragging){
+            this.bar.alpha = 1
+            
+        }
+
     }
 
     onArrowDrag(){
         null
     }
+
+    stopArrowDragging(){
+        this.rightArrowIsDragging = false
+        this.leftArrowIsDragging = false
+        this.bar.alpha = 1
+    }
+
+    setBarStart(x:number){
+        this.positionX = x
+        this.bar.drawRect(this.positionX,this.positionY,this.width,this.height)
+    }
+
+
 
 
   
