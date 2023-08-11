@@ -1,4 +1,6 @@
 import { Graphics, FederatedPointerEvent,Rectangle,Sprite,Container,Texture} from "pixijs";
+import { Viewport } from "../engine/viewport";
+import GanttLayout from "../ganttAbstraction/GanttLayout"
 const root = document.getElementById("root")
 
 export default class GanttBar {
@@ -11,12 +13,13 @@ export default class GanttBar {
     private positionX: number | null
     private positionY: number | null
     private height: number | null
-    private width: number | null
+    private width: number | null // in pixels
 
     public rightArrowIsDragging = false
     public leftArrowIsDragging = false
     private cursorOnBar = false
-    
+
+
 
     constructor(){
         
@@ -69,13 +72,11 @@ export default class GanttBar {
         this.rightArrow.alpha = 0
         
         
-
-
     }
     
 
 
-    setBar(x:number, y:number, height:number, width:number){
+    setGanttBar(x:number, y:number, height:number, width:number){
         this.height = height/2
         this.positionX = x
         this.positionY = y + (height/4)
@@ -158,16 +159,68 @@ export default class GanttBar {
     }
 
     setBarStart(x:number){
-        this.positionX = x
-        this.bar.drawRect(this.positionX,this.positionY,this.width,this.height)
+        if(this.positionX && this.width){
+            const widthDiff = this.positionX - x
+            this.width += widthDiff
+            this.positionX = x
+        }
     }
 
+    setBarEnd(x:number){
+        if(this.positionX && this.width){
+            const diff = x - (this.positionX + this.width)
+            this.width += diff
+        }
+    }
 
+    clear(){
+        this.bar.clear()
 
+    }
+    reRender(){
 
-  
+        if(this.positionX && this.positionY && this.width && this.height){
+            this.bar.beginFill(0x00FF00)
+            this.bar.drawRect(this.positionX,this.positionY,this.width,this.height)
+            
+            this.leftArrow.x = this.positionX
+            this.leftArrow.y = this.positionY + (this.height/2)
+            this.rightArrow.x = this.positionX + this.width
+            this.rightArrow.y = this.positionY + (this.height/2)
+            
+            this.bar.addChild(this.leftArrow,this.rightArrow)
+            }
+    }
 
+    public static handleLeftArrowDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
+        const viewport = e.currentTarget as Viewport
+        const x = viewport.getViewMatix().tx - e.x
+        const [col,j] = layout.getNearestColumnfromX(x)
+        console.log(col)
+        if(col){
+            
+            bar.setBarStart(col.getXPosition())
+            bar.clear()
+            bar.reRender()
+        }
+    }
+
+    public static handleRightArrowDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
+        const viewport = e.currentTarget as Viewport
+        const x = viewport.getViewMatix().tx - e.x
+        const [col,j] = layout.getNearestColumnfromX(x)
+        console.log(col)
+        if(col){
+            
+            bar.setBarEnd(col.getXPosition())
+            bar.clear()
+            bar.reRender()
+        }
+    }
     
+
+
+
 
 
 }

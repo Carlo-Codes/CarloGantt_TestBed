@@ -6,6 +6,7 @@ import GanttTask from './GanttTask'
 import {Application, FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
 import dayjs, { Dayjs } from 'dayjs'
+import GanttBar from './GanttBar'
 
 
 /* this is where everything for the chart is layed out,
@@ -257,18 +258,12 @@ class GanttLayout{
         //console.log("handleMouseMove fired")
 
         for(let i = 0; i < this.ganttTasks.length;i++){ //handleing dragging while off the bar
-            if(this.ganttTasks[i].getGanttBar().rightArrowIsDragging){
-                console.log(e.x)
+            const ganttBar = this.ganttTasks[i].getGanttBar()
+            if(ganttBar.rightArrowIsDragging){
+                GanttBar.handleRightArrowDragging(e,this,ganttBar)
             }
-            else if(this.ganttTasks[i].getGanttBar().leftArrowIsDragging){
-                
-                const viewport = e.currentTarget as Viewport
-                const x = viewport.getViewMatix().tx - e.x
-                const [col,j] = this.getNearestColumnfromX(x)
-                console.log(col)
-                if(col){
-                    this.ganttTasks[i].getGanttBar().setBarStart(col.getXPosition())
-                }
+            else if(ganttBar.leftArrowIsDragging){//handleing if draggin bar
+                GanttBar.handleLeftArrowDragging(e,this,ganttBar)
 
 
             }

@@ -87,7 +87,7 @@ export default class GanttTask{
 
         if(this.barStartXPosition && this.barSpan){
             const barWidth = this.barSpan * this.columnWidth
-            this.bar.setBar(this.barStartXPosition,this.rowBodypositionY,this.rowHeight,barWidth)
+            this.bar.setGanttBar(this.barStartXPosition,this.rowBodypositionY,this.rowHeight,barWidth)
         }
 
         this.rowRect.addChild(this.bar.getBar())
