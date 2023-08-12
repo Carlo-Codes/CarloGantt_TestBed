@@ -17,6 +17,7 @@ export default class GanttBar {
 
     public rightArrowIsDragging = false
     public leftArrowIsDragging = false
+    public barIsDragging = false
     private cursorOnBar = false
 
 
@@ -32,11 +33,9 @@ export default class GanttBar {
         this.leftArrow = new Sprite(arrowTexture)
         this.leftArrow.anchor.set(0.5,0.5)
 
-        
         this.leftArrow.rotation = 3
         this.rightArrow.scale.set(0.05,0.05)
         this.leftArrow.scale.set(0.05,0.05)
-
 
         this.positionX = null
         this.positionY = null
@@ -50,9 +49,8 @@ export default class GanttBar {
         this.bar.on('mouseover',this.onBarOver.bind(this))
         this.bar.on('mouseleave', this.onBarLeave.bind(this))
 
-        this.bar.on('mousedown', (e)=>{
-            e.stopPropagation() // start here
-        })
+        this.bar.on('mousedown', this.onBarDragStart.bind(this))
+        this.bar.on('mouseup', this.onBarDragEnd.bind(this))
         
 
         this.leftArrow.on('mouseover', this.onArrowOver.bind(this))
@@ -71,11 +69,8 @@ export default class GanttBar {
         this.leftArrow.alpha = 0
         this.rightArrow.alpha = 0
         
-        
     }
     
-
-
     setGanttBar(x:number, y:number, height:number, width:number){
         this.height = height/2
         this.positionX = x
@@ -97,7 +92,7 @@ export default class GanttBar {
     getBar(){
         return this.bar
     }
-
+ //clean below up with functions with arguments
     onBarOver(e:FederatedPointerEvent){
         e.stopPropagation()
         this.leftArrow.alpha = 1
@@ -111,6 +106,20 @@ export default class GanttBar {
         this.rightArrow.alpha = 0
         
     }
+
+    onBarDragStart(e:FederatedPointerEvent){
+        e.stopPropagation()
+        this.bar.alpha = 0.5
+        this.barIsDragging = true
+    }
+
+    onBarDragEnd(e:FederatedPointerEvent){
+        e.stopPropagation()
+        this.bar.alpha = 1
+        this.barIsDragging = false
+    }
+
+
 
     onArrowOver(e:FederatedPointerEvent){
         if(root){
@@ -140,16 +149,9 @@ export default class GanttBar {
     }
 
     onArrowDragEnd(e:FederatedPointerEvent){
-    
         if(this.rightArrowIsDragging || this.leftArrowIsDragging){
             this.bar.alpha = 1
-            
         }
-
-    }
-
-    onArrowDrag(){
-        null
     }
 
     stopArrowDragging(){
@@ -173,6 +175,11 @@ export default class GanttBar {
         }
     }
 
+    moveBar(x:number, y:number){
+        this.positionX = x
+        this.positionY = y
+    }
+
     clear(){
         this.bar.clear()
 
@@ -192,6 +199,7 @@ export default class GanttBar {
             }
     }
 
+    //methods for handling dragging when in the layout
     public static handleLeftArrowDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
@@ -216,6 +224,25 @@ export default class GanttBar {
             bar.clear()
             bar.reRender()
         }
+    }
+
+    getBarPositionY(){
+        return this.positionY
+    }
+
+    public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
+        const viewport = e.currentTarget as Viewport
+        const x = viewport.getViewMatix().tx - e.x
+        const y = viewport.getViewMatix().ty - e.y
+        const [task, taskI] = layout.getNearestTaskfromY(y)
+        const [col, colI] = layout.getNearestColumnfromX(x)
+
+        if(col && task){
+            bar.moveBar(col.getXPosition(),task.getGanttBar().getBarPositionY())
+            bar.clear()
+            bar.reRender()
+        }
+
     }
     
 

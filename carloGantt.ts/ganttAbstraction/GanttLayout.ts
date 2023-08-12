@@ -210,9 +210,9 @@ class GanttLayout{
     }
 
     getNearestColumnfromX(x:number):[GanttColumn|null,number|null]{ // returning the column and its index in the column arry of which its x position is closest to the x value supplied
-        const absX = Math.abs(x)
+        const absX = Math.abs(x) // possible jitteryness
         let nearestColumn : GanttColumn | null = null 
-        let distanceX : number | null = null
+        let distanceX : number | null = null//distance to current col in loop. smallest distance will be here at end of loop
         let colI : number | null = null
         for(let i = 0; i < this.ganttColumns.length; i++){
             if(!nearestColumn || !distanceX){
@@ -229,6 +229,30 @@ class GanttLayout{
             }
         }
         return [nearestColumn,colI]
+    }
+
+    getNearestTaskfromY(y:number):[GanttTask|null, number|null]{ //static mathod in gant task?
+        const absY = Math.abs(y)// possible jitteryness
+        let nearestTask : GanttTask | null = null
+        let distanceY : number | null = null //distance to current task in loop. smallest distance will be here at end of loop
+        let taskI:number | null = null
+        for(let i = 0; i < this.ganttTasks.length; i++){
+            const task = this.ganttTasks[i]
+            if(!nearestTask || !distanceY){
+                nearestTask = task
+                distanceY = Math.abs(task.getRowBodyPostionY())
+                taskI = i
+            }else{
+                const tempDistance = Math.abs((task.getRowBodyPostionY()-absY))
+                if(tempDistance < distanceY){
+                    distanceY = tempDistance
+                    nearestTask = task
+                    taskI = i
+                }
+
+            }
+        }
+        return [nearestTask, taskI]
     }
 
     //eventHandleing//
@@ -257,15 +281,16 @@ class GanttLayout{
         e.preventDefault()
         //console.log("handleMouseMove fired")
 
-        for(let i = 0; i < this.ganttTasks.length;i++){ //handleing dragging while off the bar
+        //Bar Dragging Handleing 
+        for(let i = 0; i < this.ganttTasks.length;i++){
             const ganttBar = this.ganttTasks[i].getGanttBar()
-            if(ganttBar.rightArrowIsDragging){
+            if(ganttBar.rightArrowIsDragging){//rightArrow
                 GanttBar.handleRightArrowDragging(e,this,ganttBar)
             }
-            else if(ganttBar.leftArrowIsDragging){//handleing if draggin bar
+            else if(ganttBar.leftArrowIsDragging){//leftArrow
                 GanttBar.handleLeftArrowDragging(e,this,ganttBar)
-
-
+            }else if(ganttBar.barIsDragging){
+                GanttBar.handleBarDragging(e,this,ganttBar)
             }
         }
 

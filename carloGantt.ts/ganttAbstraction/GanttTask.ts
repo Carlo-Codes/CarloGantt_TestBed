@@ -131,4 +131,8 @@ export default class GanttTask{
     getTaskDetails(){
         return this.task
     }
+
+    getRowBodyPostionY(){
+        return this.rowBodypositionY
+    }
 }
