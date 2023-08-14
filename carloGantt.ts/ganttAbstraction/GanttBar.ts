@@ -114,7 +114,6 @@ export default class GanttBar {
     }
 
     onBarDragEnd(e:FederatedPointerEvent){
-        e.stopPropagation()
         this.bar.alpha = 1
         this.barIsDragging = false
     }
@@ -155,6 +154,13 @@ export default class GanttBar {
     }
 
     stopArrowDragging(){
+        this.rightArrowIsDragging = false
+        this.leftArrowIsDragging = false
+        this.bar.alpha = 1
+    }
+
+    stopAllDragging(){
+        this.barIsDragging = false
         this.rightArrowIsDragging = false
         this.leftArrowIsDragging = false
         this.bar.alpha = 1
@@ -231,6 +237,7 @@ export default class GanttBar {
     }
 
     public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
+        e.stopPropagation()
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
@@ -238,7 +245,9 @@ export default class GanttBar {
         const [col, colI] = layout.getNearestColumnfromX(x)
 
         if(col && task){
-            bar.moveBar(col.getXPosition(),task.getGanttBar().getBarPositionY())
+            const x = col.getXPosition()
+            const y = task.getGanttBar().getBarPositionY()
+            bar.moveBar(x,y)
             bar.clear()
             bar.reRender()
         }

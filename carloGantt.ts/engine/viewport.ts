@@ -76,7 +76,7 @@ export class Viewport extends Container{
         this.limitTranform()
         
         this.transform.setFromMatrix(this.viewMatrix)
-        console.log(this.viewMatrix)
+        //console.log(this.viewMatrix)
 
     }
 

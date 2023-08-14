@@ -257,7 +257,12 @@ class GanttLayout{
 
     //eventHandleing//
     handleMouseDown(e:FederatedPointerEvent){ 
-        e.stopPropagation()
+        for(let i = 0; i < this.ganttTasks.length;i++){ //handleing cancel dragging while off the bar
+            const ganttBar = this.ganttTasks[i].getGanttBar()
+            if(ganttBar.barIsDragging){
+                return 
+            }
+        }
         this.mouseDown = true
         this.mX = e.clientX
         this.mY = e.clientY 
@@ -268,10 +273,8 @@ class GanttLayout{
         e.preventDefault()
         this.mouseDown = false
         for(let i = 0; i < this.ganttTasks.length;i++){ //handleing cancel dragging while off the bar
-            if(this.ganttTasks[i].getGanttBar().rightArrowIsDragging||this.ganttTasks[i].getGanttBar().leftArrowIsDragging){
-                console.log(i)
-                this.ganttTasks[i].getGanttBar().stopArrowDragging()
-            }
+            this.ganttTasks[i].getGanttBar().stopAllDragging()
+            
         }
         //console.log("handleMouseUp fired")
     }
@@ -279,6 +282,7 @@ class GanttLayout{
     handleMouseMove(e:FederatedPointerEvent){
        
         e.preventDefault()
+        e.stopPropagation()
         //console.log("handleMouseMove fired")
 
         //Bar Dragging Handleing 
@@ -290,7 +294,9 @@ class GanttLayout{
             else if(ganttBar.leftArrowIsDragging){//leftArrow
                 GanttBar.handleLeftArrowDragging(e,this,ganttBar)
             }else if(ganttBar.barIsDragging){
+                console.log(ganttBar)
                 GanttBar.handleBarDragging(e,this,ganttBar)
+                return
             }
         }
 
