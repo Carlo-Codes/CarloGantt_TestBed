@@ -210,7 +210,7 @@ class GanttLayout{
     }
 
     getNearestColumnfromX(x:number):[GanttColumn|null,number|null]{ // returning the column and its index in the column arry of which its x position is closest to the x value supplied
-        const absX = Math.abs(x) // possible jitteryness
+        const absX = Math.abs(x) 
         let nearestColumn : GanttColumn | null = null 
         let distanceX : number | null = null//distance to current col in loop. smallest distance will be here at end of loop
         let colI : number | null = null
@@ -240,7 +240,7 @@ class GanttLayout{
             const task = this.ganttTasks[i]
             if(!nearestTask || !distanceY){
                 nearestTask = task
-                distanceY = Math.abs(task.getRowBodyPostionY())
+                distanceY = Math.abs(task.getRowBodyPostionY()-absY)
                 taskI = i
             }else{
                 const tempDistance = Math.abs((task.getRowBodyPostionY()-absY))
@@ -279,6 +279,12 @@ class GanttLayout{
         //console.log("handleMouseUp fired")
     }
 
+    reorderTask(targetTask:GanttTask, TargetI:number){
+        const sourceI = this.ganttTasks.indexOf(targetTask)
+        const movingTask = this.ganttTasks.splice(sourceI,1)[0]
+        this.ganttTasks.splice(TargetI,1,movingTask)
+    }
+
     handleMouseMove(e:FederatedPointerEvent){
        
         e.preventDefault()
@@ -294,8 +300,8 @@ class GanttLayout{
             else if(ganttBar.leftArrowIsDragging){//leftArrow
                 GanttBar.handleLeftArrowDragging(e,this,ganttBar)
             }else if(ganttBar.barIsDragging){
-                console.log(ganttBar)
-                GanttBar.handleBarDragging(e,this,ganttBar)
+                //console.log(this.ganttTasks[i])
+                GanttBar.handleBarDragging(e,this,this.ganttTasks[i])
                 return
             }
         }

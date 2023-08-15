@@ -1,6 +1,7 @@
 import { Graphics, FederatedPointerEvent,Rectangle,Sprite,Container,Texture} from "pixijs";
 import { Viewport } from "../engine/viewport";
 import GanttLayout from "../ganttAbstraction/GanttLayout"
+import GanttTask from "./GanttTask";
 const root = document.getElementById("root")
 
 export default class GanttBar {
@@ -181,9 +182,8 @@ export default class GanttBar {
         }
     }
 
-    moveBar(x:number, y:number){
+    moveBar(x:number){
         this.positionX = x
-        this.positionY = y
     }
 
     clear(){
@@ -235,19 +235,34 @@ export default class GanttBar {
     getBarPositionY(){
         return this.positionY
     }
+    getBarPositionX(){
+        return this.positionX
+    }
 
-    public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , bar:GanttBar){
+    public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask){
         e.stopPropagation()
+        const bar = GanttTask.getGanttBar()
+        const currentBarPositionX = bar.positionX
+        
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
         const [task, taskI] = layout.getNearestTaskfromY(y)
-        const [col, colI] = layout.getNearestColumnfromX(x)
+        const XMinusClickOffSet = Math.abs(x) - currentBarPositionX
+        console.log("barX = " + currentBarPositionX)
+        console.log("offset = " + XMinusClickOffSet)
+        console.log(bar)
+        const [col, colI] = layout.getNearestColumnfromX(XMinusClickOffSet)
 
         if(col && task){
-            const x = col.getXPosition()
+            const colX = col.getXPosition()
             const y = task.getGanttBar().getBarPositionY()
-            bar.moveBar(x,y)
+/*             console.log("colX = " + colX)
+            console.log("x = " + x)
+            console.log("barX = "+ bar.positionX) */
+
+
+            bar.moveBar(colX)
             bar.clear()
             bar.reRender()
         }

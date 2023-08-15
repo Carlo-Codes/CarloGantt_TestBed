@@ -135,4 +135,6 @@ export default class GanttTask{
     getRowBodyPostionY(){
         return this.rowBodypositionY
     }
+
+    
 }
