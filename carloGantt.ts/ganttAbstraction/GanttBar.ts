@@ -21,6 +21,7 @@ export default class GanttBar {
     public barIsDragging = false
     private cursorOnBar = false
 
+    public clickedPosition: number | null
 
 
     constructor(){
@@ -46,6 +47,8 @@ export default class GanttBar {
         this.bar.interactive = true
         this.leftArrow.interactive = true
         this.rightArrow.interactive = true 
+
+        this.clickedPosition = null
 
         this.bar.on('mouseover',this.onBarOver.bind(this))
         this.bar.on('mouseleave', this.onBarLeave.bind(this))
@@ -242,17 +245,20 @@ export default class GanttBar {
     public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask){
         e.stopPropagation()
         const bar = GanttTask.getGanttBar()
-        const currentBarPositionX = bar.positionX
+        if(!bar.clickedPosition){
+            bar.clickedPosition = bar.positionX
+        }
         
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
         const [task, taskI] = layout.getNearestTaskfromY(y)
-        const XMinusClickOffSet = Math.abs(x) - currentBarPositionX
-        console.log("barX = " + currentBarPositionX)
+        const XMinusClickOffSet = Math.abs(x) - bar.clickedPosition
+        console.log("barX = " + bar.clickedPosition)
         console.log("offset = " + XMinusClickOffSet)
-        console.log(bar)
-        const [col, colI] = layout.getNearestColumnfromX(XMinusClickOffSet)
+        console.log(bar.clickedPosition - XMinusClickOffSet)
+        const offsetX = bar.clickedPosition - XMinusClickOffSet
+        const [col, colI] = layout.getNearestColumnfromX(offsetX)
 
         if(col && task){
             const colX = col.getXPosition()
