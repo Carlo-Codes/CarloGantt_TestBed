@@ -257,33 +257,31 @@ export default class GanttBar {
 
         
         
-        if(!bar.clickedOffset){ //calculating offset & storing it.
+        if(!bar.clickedOffset && bar.positionX){ //calculating offset & storing it.
             const ClickOffSet = Math.abs(x) - bar.positionX
             bar.clickedOffset = ClickOffSet
-        }
+        } 
 
-        const newX = Math.abs(x) - bar.clickedOffset //applying offset to global x click
+        if(bar.clickedOffset){
+            const newX = Math.abs(x) - bar.clickedOffset //applying offset to global x click
 
-        console.log("clicked Global X = " + x)
-        console.log("barX = " + bar.positionX)
-        console.log("offset = " + bar.clickedOffset)
-        console.log("newBarX = " + newX)
-        console.log("\n\n\n\n\n\n")
-
-        const [col, colI] = layout.getNearestColumnfromX(newX)
-
-        if(col && task){
-            const colX = col.getXPosition()
-            const y = task.getGanttBar().getBarPositionY()
-/*             console.log("colX = " + colX)
-            console.log("x = " + x)
-            console.log("barX = "+ bar.positionX) */
-
-
-            bar.moveBar(colX)
-            bar.clear()
-            
-            bar.reRender()
+/*             console.log("clicked Global X = " + x)
+            console.log("barX = " + bar.positionX)
+            console.log("offset = " + bar.clickedOffset)
+            console.log("newBarX = " + newX)
+            console.log("\n\n\n\n\n\n") */
+    
+            const [col, colI] = layout.getNearestColumnfromX(newX) // finding the nearest column
+    
+            if(col && task){ //applying movement
+                const colX = col.getXPosition()
+                const y = task.getGanttBar().getBarPositionY()
+    
+                bar.moveBar(colX)
+                bar.clear() 
+                bar.reRender()
+            }
+    
         }
 
     }
