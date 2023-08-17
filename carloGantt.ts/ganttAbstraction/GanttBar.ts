@@ -21,8 +21,10 @@ export default class GanttBar {
     public barIsDragging = false
     private cursorOnBar = false
 
-    public clickedPosition: number | null
-    public clickedOffset: number | null
+    
+    public clickedOffset: number | null //the X offset at the point of cliking on the bar
+
+    public onClickI : number | null //the index of the task of the bar in the global list of tasks apon click
 
 
     constructor(){
@@ -49,8 +51,8 @@ export default class GanttBar {
         this.leftArrow.interactive = true
         this.rightArrow.interactive = true 
 
-        this.clickedPosition = null
         this.clickedOffset = null
+        this.onClickI = null
 
         this.bar.on('mouseover',this.onBarOver.bind(this))
         this.bar.on('mouseleave', this.onBarLeave.bind(this))
@@ -171,7 +173,7 @@ export default class GanttBar {
         this.leftArrowIsDragging = false
         this.bar.alpha = 1
         this.clickedOffset = null
-        this.clickedPosition = null
+        this.onClickI = null
     }
 
     setBarStart(x:number){
@@ -246,17 +248,14 @@ export default class GanttBar {
         return this.positionX
     }
 
-    public static handleBarDragging(e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask){
+    public static handleBarXDragging(e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask){
         e.stopPropagation()
         const bar = GanttTask.getGanttBar()
 
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
-        const [task, taskI] = layout.getNearestTaskfromY(y)
 
-        
-        
         if(!bar.clickedOffset && bar.positionX){ //calculating offset & storing it.
             const ClickOffSet = Math.abs(x) - bar.positionX
             bar.clickedOffset = ClickOffSet
@@ -264,26 +263,43 @@ export default class GanttBar {
 
         if(bar.clickedOffset){
             const newX = Math.abs(x) - bar.clickedOffset //applying offset to global x click
-
-/*             console.log("clicked Global X = " + x)
-            console.log("barX = " + bar.positionX)
-            console.log("offset = " + bar.clickedOffset)
-            console.log("newBarX = " + newX)
-            console.log("\n\n\n\n\n\n") */
-    
             const [col, colI] = layout.getNearestColumnfromX(newX) // finding the nearest column
     
-            if(col && task){ //applying movement
+            if(col){ //applying movement
                 const colX = col.getXPosition()
-                const y = task.getGanttBar().getBarPositionY()
+                
     
                 bar.moveBar(colX)
                 bar.clear() 
                 bar.reRender()
             }
-    
         }
+    }
 
+    public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , ganttTasks:GanttTask[], taskI:number){
+        e.stopPropagation()
+        const task = ganttTasks[taskI]
+        const bar = task.getGanttBar()
+
+        const viewport = e.currentTarget as Viewport
+        const x = viewport.getViewMatix().tx - e.x
+        const y = viewport.getViewMatix().ty - e.y
+        const [toMoveTask, movingTaskI] = layout.getNearestTaskfromY(y)
+        bar.onClickI = movingTaskI
+        if(taskI === movingTaskI){
+            console.log("same")
+            return
+        } else if(toMoveTask && movingTaskI){
+            
+            console.log(movingTaskI)
+            
+            layout.reorderTask(task, movingTaskI)
+            for(let i = 0; i < ganttTasks.length;i++){
+                console.log(ganttTasks[i])
+                ganttTasks[i].clear()
+                ganttTasks[i].render()
+            }
+        }
     }
     
 

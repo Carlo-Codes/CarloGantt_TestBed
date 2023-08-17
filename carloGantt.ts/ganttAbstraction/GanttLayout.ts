@@ -301,7 +301,8 @@ class GanttLayout{
                 GanttBar.handleLeftArrowDragging(e,this,ganttBar)
             }else if(ganttBar.barIsDragging){
                 //console.log(this.ganttTasks[i])
-                GanttBar.handleBarDragging(e,this,this.ganttTasks[i])
+                GanttBar.handleBarXDragging(e,this,this.ganttTasks[i])
+                GanttBar.handleBarYDragging(e,this,this.ganttTasks,i)
                 return
             }
         }
