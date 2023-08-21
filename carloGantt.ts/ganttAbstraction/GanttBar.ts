@@ -276,10 +276,12 @@ export default class GanttBar {
         }
     }
 
-    public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , ganttTasks:GanttTask[], taskI:number){
+    public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , taskI:number){
         e.stopPropagation()
+        const ganttTasks = layout.getTasks()
         const task = ganttTasks[taskI]
         const bar = task.getGanttBar()
+        
 
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
