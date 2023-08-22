@@ -35,7 +35,7 @@ class GanttLayout{
 
     //tasks - Relating to the custom class fore rendering tasks and the gant bars
     private tasks ?: taskType[]
-    private ganttTasks: GanttTask[]
+    public ganttTasks: GanttTask[]
     private rowHeights : number
     private rowWidths? : number
 
@@ -302,7 +302,7 @@ class GanttLayout{
             }else if(ganttBar.barIsDragging){
                 //console.log(this.ganttTasks[i])
                 GanttBar.handleBarXDragging(e,this,this.ganttTasks[i])
-                //GanttBar.handleBarYDragging(e,this,this.ganttTasks,i)
+                GanttBar.handleBarYDragging(e,this,i)
                 return
             }
         }

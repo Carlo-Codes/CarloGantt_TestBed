@@ -278,7 +278,7 @@ export default class GanttBar {
 
     public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , taskI:number){
         e.stopPropagation()
-        const ganttTasks = layout.getTasks()
+        const ganttTasks = layout.ganttTasks
         const task = ganttTasks[taskI]
         const bar = task.getGanttBar()
         
@@ -293,14 +293,17 @@ export default class GanttBar {
             return
         } else if(toMoveTask && movingTaskI){
             
-            console.log(movingTaskI)
+            console.log(toMoveTask.getTaskDetails())
+           // console.log(task)
             
             layout.reorderTask(task, movingTaskI)
             for(let i = 0; i < ganttTasks.length;i++){
-                console.log(ganttTasks[i])
                 ganttTasks[i].clear()
                 ganttTasks[i].render()
             }
+            
+
+            
         }
     }
     
