@@ -290,21 +290,13 @@ export default class GanttBar {
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
         const [hoveringOverTask, hoveringOverTaskI] = layout.getNearestTaskfromY(y)// should inially return the same task as one weve grabbed
-        console.log(y)
-        console.log("hover Over Task = ")
-        console.log(hoveringOverTask)
-        console.log("moving Task = ")
-        console.log(task)
+        
         if(hoveringOverTask && hoveringOverTask!=task){
-            task.setRowBodyPositionY(hoveringOverTask.getRowBodyPostionY())
-/*             for(let i = 0; i < ganttTasks.length; i++){
-                const compTask = ganttTasks[i]
-                const compTaskY = compTask.getRowBodyPostionY()
-                
-                if(compTaskY >= taskY){
-                    compTask.setRowBodyPositionY(compTaskY + rowHeight)
-                }
-            }*/
+            const hoveringOverTaskY = hoveringOverTask.getRowBodyPostionY()
+
+            task.setRowBodyPositionY(hoveringOverTaskY) //swap y values
+            hoveringOverTask.setRowBodyPositionY(taskY)
+
         }
         
         for(let i = 0; i < ganttTasks.length;i++){

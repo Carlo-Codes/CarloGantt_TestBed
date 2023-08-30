@@ -3,10 +3,11 @@ import { renderSettings, taskType } from '../types/generalTypes'
 import GanttColumn from './GanttColumns'
 import {Viewport} from '../engine/viewport'
 import GanttTask from './GanttTask'
-import {Application, FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
+import {Application, BitmapText, FederatedPointerEvent, FederatedWheelEvent} from 'pixijs'
 import { rgb2hex } from 'pixijs/utils'
 import dayjs, { Dayjs } from 'dayjs'
 import GanttBar from './GanttBar'
+import { Text, TextStyle } from 'pixijs/text'
 
 
 /* this is where everything for the chart is layed out,
@@ -237,6 +238,8 @@ class GanttLayout{
         let distanceY : number | null = null //distance to current task in loop. smallest distance will be here at end of loop
         let taskI:number | null = null
         for(let i = 0; i < this.ganttTasks.length; i++){
+            console.log(nearestTask)
+            console.log("distances = " + distanceY)
             const task = this.ganttTasks[i]
             if(!nearestTask || !distanceY){
                 nearestTask = task
@@ -315,7 +318,25 @@ class GanttLayout{
         
         this.mY = new_mY
         this.mX = new_mX
+
+        //debugging/////////
+/*         const debugStyle = new TextStyle({
+            align: "center",
+            fill: "#754c24",
+            fontSize: 10
+        });
+
+        const viewport = e.currentTarget as Viewport
+        const x = viewport.getViewMatix().tx - e.x
+        const y = viewport.getViewMatix().ty - e.y
         
+        const xLabel = new Text(x.toString(),debugStyle)
+        const yLabel = new Text(y.toString(),debugStyle)
+
+        xLabel.position.set(x, y)
+        yLabel.position.set(x + 10 , y)
+
+         */
     }   
 
     handleMouseWheel(e:FederatedWheelEvent){
