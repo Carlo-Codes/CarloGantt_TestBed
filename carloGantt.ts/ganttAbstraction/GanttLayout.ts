@@ -280,9 +280,7 @@ class GanttLayout{
     }
 
     reorderTask(targetTask:GanttTask, TargetI:number){
-        const sourceI = this.ganttTasks.indexOf(targetTask)
-        const movingTask = this.ganttTasks.splice(sourceI,1)[0]
-        this.ganttTasks.splice(TargetI,1,movingTask)
+     null
     }
 
     handleMouseMove(e:FederatedPointerEvent){

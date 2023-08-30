@@ -136,5 +136,13 @@ export default class GanttTask{
         return this.rowBodypositionY
     }
 
+    setRowBodyPositionY(y:number){
+        this.rowBodypositionY = y
+    }
+
+    getRowHeight(){
+        return this.rowHeight
+    }
+
     
 }

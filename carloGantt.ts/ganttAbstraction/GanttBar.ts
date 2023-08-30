@@ -256,7 +256,7 @@ export default class GanttBar {
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
 
-        if(!bar.clickedOffset && bar.positionX){ //calculating offset & storing it.
+        if(!bar.clickedOffset && bar.positionX){ //calculating clicking offset & storing it.
             const ClickOffSet = Math.abs(x) - bar.positionX
             bar.clickedOffset = ClickOffSet
         } 
@@ -277,34 +277,44 @@ export default class GanttBar {
     }
 
     public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , taskI:number){
+        //major problem here - look at the get nearest task from y function and look at how we reshuffle and redisplay taks
         e.stopPropagation()
-        const ganttTasks = layout.ganttTasks
+        const ganttTasks = layout.ganttTasks 
         const task = ganttTasks[taskI]
         const bar = task.getGanttBar()
+        const rowHeight = task.getRowHeight()
+        const taskY = task.getRowBodyPostionY()
         
 
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
         const y = viewport.getViewMatix().ty - e.y
-        const [toMoveTask, movingTaskI] = layout.getNearestTaskfromY(y)
-        bar.onClickI = movingTaskI
-        if(taskI === movingTaskI){
-            console.log("same")
-            return
-        } else if(toMoveTask && movingTaskI){
-            
-            console.log(toMoveTask.getTaskDetails())
-           // console.log(task)
-            
-            layout.reorderTask(task, movingTaskI)
-            for(let i = 0; i < ganttTasks.length;i++){
-                ganttTasks[i].clear()
-                ganttTasks[i].render()
-            }
+        const [hoveringOverTask, hoveringOverTaskI] = layout.getNearestTaskfromY(y)// should inially return the same task as one weve grabbed
+        console.log(y)
+        console.log("hover Over Task = ")
+        console.log(hoveringOverTask)
+        console.log("moving Task = ")
+        console.log(task)
+        if(hoveringOverTask && hoveringOverTask!=task){
+            task.setRowBodyPositionY(hoveringOverTask.getRowBodyPostionY())
+/*             for(let i = 0; i < ganttTasks.length; i++){
+                const compTask = ganttTasks[i]
+                const compTaskY = compTask.getRowBodyPostionY()
+                
+                if(compTaskY >= taskY){
+                    compTask.setRowBodyPositionY(compTaskY + rowHeight)
+                }
+            }*/
+        }
+        
+        for(let i = 0; i < ganttTasks.length;i++){
+            ganttTasks[i].clear()
+            ganttTasks[i].render()
+        }
             
 
             
-        }
+        
     }
     
 
