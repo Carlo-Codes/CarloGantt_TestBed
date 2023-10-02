@@ -249,7 +249,7 @@ export default class GanttBar {
     }
 
     public static handleBarXDragging(e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask){
-        e.stopPropagation()
+        //e.stopPropagation()
         const bar = GanttTask.getGanttBar()
 
         const viewport = e.currentTarget as Viewport
@@ -276,7 +276,7 @@ export default class GanttBar {
         }
     }
 
-    public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , taskI:number){
+    public static handleBarYDragging(e:FederatedPointerEvent, layout:GanttLayout , taskI:number, handleXcallback: (e:FederatedPointerEvent, layout:GanttLayout , GanttTask:GanttTask) => void){
         //major problem here - look at the get nearest task from y function and look at how we reshuffle and redisplay taks
         e.stopPropagation()
         const ganttTasks = layout.ganttTasks 
@@ -285,10 +285,9 @@ export default class GanttBar {
         const rowHeight = task.getRowHeight()
         const taskY = task.getRowBodyPostionY()
         
-
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
-        const y = viewport.getViewMatix().ty - e.y
+        const y = viewport.getViewMatix().ty - e.y + (rowHeight/2)
         const [hoveringOverTask, hoveringOverTaskI] = layout.getNearestTaskfromY(y)// should inially return the same task as one weve grabbed
         
         if(hoveringOverTask && hoveringOverTask!=task){
@@ -296,16 +295,14 @@ export default class GanttBar {
 
             task.setRowBodyPositionY(hoveringOverTaskY) //swap y values
             hoveringOverTask.setRowBodyPositionY(taskY)
-
         }
         
         for(let i = 0; i < ganttTasks.length;i++){
             ganttTasks[i].clear()
             ganttTasks[i].render()
         }
-            
 
-            
+        handleXcallback(e,layout,ganttTasks[taskI])
         
     }
     
