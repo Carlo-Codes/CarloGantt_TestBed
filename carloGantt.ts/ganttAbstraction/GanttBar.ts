@@ -284,6 +284,8 @@ export default class GanttBar {
         const bar = task.getGanttBar()
         const rowHeight = task.getRowHeight()
         const taskY = task.getRowBodyPostionY()
+        const detailsPanel = layout.getDetailsPanelViewport()
+
         
         const viewport = e.currentTarget as Viewport
         const x = viewport.getViewMatix().tx - e.x
@@ -297,8 +299,14 @@ export default class GanttBar {
             hoveringOverTask.setRowBodyPositionY(taskY)
         }
         
+        detailsPanel.removeChildren() //clearing the details panel and rerendering it
+        layout.generateDetailsPanel();
+
         for(let i = 0; i < ganttTasks.length;i++){
             ganttTasks[i].clear()
+            
+            detailsPanel.addGraphics(ganttTasks[i].getDetailsRect())//re adding details
+
             ganttTasks[i].render()
         }
 

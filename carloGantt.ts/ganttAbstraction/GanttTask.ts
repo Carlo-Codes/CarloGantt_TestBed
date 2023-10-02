@@ -80,6 +80,7 @@ export default class GanttTask{
     render(){
         this.detailsRect.lineStyle(this.lineWeight,this.lineColour)
         this.detailsRect.drawRect(this.detailsPositionX, this.detailsPostionY, this.detailsWidth, this.rowHeight)
+        this.detailsNameText.position.set(this.detailsPositionX, this.detailsPostionY)
         this.rowRect.lineStyle(this.lineWeight, this.lineColour)
         this.rowRect.drawRect(this.rowBodyPositionX, this.rowBodypositionY, this.rowWidth, this.rowHeight)
 
@@ -138,6 +139,7 @@ export default class GanttTask{
 
     setRowBodyPositionY(y:number){
         this.rowBodypositionY = y
+        this.detailsPostionY = y
     }
 
     getRowHeight(){

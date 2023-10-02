@@ -302,7 +302,7 @@ class GanttLayout{
                 GanttBar.handleLeftArrowDragging(e,this,ganttBar)
             }else if(ganttBar.barIsDragging){
                 GanttBar.handleBarYDragging(e,this,i,GanttBar.handleBarXDragging)
-                
+                return
             }
         }
 
@@ -398,6 +398,7 @@ class GanttLayout{
         this.ganttChart.stage.addChild(this.columnHeadingViewport)
         this.ganttChart.stage.addChild(this.detailsPanelViewport)
     }
+    
 }
 
 export default GanttLayout

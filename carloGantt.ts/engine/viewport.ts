@@ -141,5 +141,11 @@ export class Viewport extends Container{
         return this.viewMatrix
     }
 
+    clear(){
+        this.removeChildren()
+    }
+
+  
+
     
 }
