@@ -3,7 +3,7 @@ import "./GantChart.css"
 import { renderSettings, taskType } from './types/generalTypes'
 import { Application,Graphics, FederatedPointerEvent, FederatedWheelEvent } from 'pixijs'
 import GanttLayout from './ganttAbstraction/GanttLayout'
-import dayjs from 'dayjs'
+
 import { rgb2hex } from 'pixijs/utils'
 
 

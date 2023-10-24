@@ -32,7 +32,7 @@ export default class GanttBar {
         this.bar = new Graphics()
    
         
-        const arrowTexture = Texture.from("carloGantt.ts/Assets/Arrow.png")
+        const arrowTexture = Texture.from("carloGantt.ts/assets/Arrow.png")
         this.rightArrow = new Sprite(arrowTexture)
         this.rightArrow.anchor.set(0.5,0.5)
         this.leftArrow = new Sprite(arrowTexture)

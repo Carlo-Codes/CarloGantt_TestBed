@@ -3,7 +3,7 @@ This Class generates the time divisions for the gantt chart
 
 */
 
-import * as dayjs from "dayjs"
+import dayjs from "dayjs"
 import { renderSettings } from "../types/generalTypes"
 
 

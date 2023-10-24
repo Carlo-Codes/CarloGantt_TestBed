@@ -20,7 +20,7 @@ class GanttGrid extends Graphics{
         this.nCols = settings.timeBuffer
         this.nRows = settings.nRows
         this.gridLineColour = settings.gridLineColour
-        this.colWidth = settings.rowWidth
+        this.colWidth = settings.columnWidth
     }
 
     draw(){
